@@ -20,7 +20,8 @@ const config = {
             ACCESS_KEY: process.env.ACCESS_KEY
         },
         ips: {
-            WHITE_LISTED: process.env.WHITE_LISTED_IPS
+            WHITE_LISTED: process.env.WHITE_LISTED_IPS || [],
+            STATIC_OUTBOUND: process.env.STATIC_OUTBOUND || []
         }
     },
     database: {
