@@ -6,7 +6,8 @@ const cookieParser = require('cookie-parser');
 const logger = require('../logger');
 const helmet = require('helmet');
 const trimRequestBody = require('../utils/trim-object-strings');
-const { domain } = require('../../config');
+const Sentry = require('@sentry/node')
+const { domain, sentry } = require('../../config');
 const { limiter } = require('./rate.limit.middleware');
 const logIncomingRequest = require('../logger/incomming-req-logger');
 const helmetConfig = require('./helmetConfig');
@@ -21,6 +22,14 @@ const corsOptions = {
 module.exports = (app) => {
     // Enable trust proxy for handling proxied requests
     app.enable('trust proxy');
+
+    Sentry.init({dsn: sentry.DSN, tracesSampleRate: 1.0});
+
+    // Sentry request handler of transactions for performance monitoring.
+    app.use(Sentry.Handlers.requestHandler());
+
+    // TracingHandler creates a trace for every incoming request
+    app.use(Sentry.Handlers.tracingHandler());
 
     // Serve Public Folder
     app.use("/", express.static(path.join(__dirname, "..", "..", "public")));
@@ -54,7 +63,4 @@ module.exports = (app) => {
 
     // Add a custom logger to the Express app
     app.logger = logger;
-
-    // Log each incoming request with method and route information
-    app.use(logIncomingRequest);
 };

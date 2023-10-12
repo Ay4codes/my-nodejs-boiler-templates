@@ -12,6 +12,7 @@
   "author": "Ayomide Ishola",
   "license": "ISC",
   "dependencies": {
+    "@sentry/node": "^7.70.0",
     "body-parser": "^1.20.2",
     "cluster": "^0.7.7",
     "cookie-parser": "^1.4.6",
@@ -20,7 +21,9 @@
     "express": "^4.18.2",
     "express-rate-limit": "^6.11.1",
     "helmet": "^7.0.0",
+    "joi": "^17.10.2",
     "luxon": "^3.4.3",
+    "mongoose": "^7.5.2",
     "ms": "^2.1.3",
     "os": "^0.1.2",
     "path": "^0.12.7",
