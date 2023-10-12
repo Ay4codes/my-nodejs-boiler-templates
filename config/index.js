@@ -4,8 +4,8 @@ require('dotenv').config()
 const config = {
     APP_NAME: "hng-task-one",
     domain: {
-        API: 'https://api.hng-task-one.com',
-        WEB: 'https://hng-task-one.com'
+        API: 'https://api.my-template.com',
+        WEB: 'https://my-template.com'
     },
     BCRYPT_SALT: Number(process.env.BCRYPT_SALT) || 10,
     auth: {
@@ -25,7 +25,7 @@ const config = {
     },
     database: {
         connection: {
-            MONGO_URI: process.env.MONGO_URI || "mongodb://127.0.0.1:27017/hng-task-one",
+            MONGO_URI: process.env.MONGO_URI || "mongodb://127.0.0.1:27017/my-templateDB",
         },
         access: {
             DB_TOKEN_EXPIRY_DURATION: process.env.DB_TOKEN_EXPIRY_DURATION ? ms(process.env.DB_TOKEN_EXPIRY_DURATION) : ms("15m"),
@@ -41,10 +41,10 @@ const config = {
         PASSWORD: process.env.MAILER_PASSWORD,
         PORT: process.env.MAILER_PORT,
         SECURE: process.env.MAILER_SECURE || true,
-        DOMAIN: "fuelpayafrica.com",
+        DOMAIN: "url",
         ADMIN: process.env.ADMIN,
         SUPPORT: process.env.SUPPORT,
-        DEFAULT_EMAIL_FROM: "hng-task-one <no-reply@hng-task-one.com>",
+        DEFAULT_EMAIL_FROM: "my-template <no-reply@my-template.com>",
     },
     sentry: {
         DSN: process.env.SENTRY_DSN,
