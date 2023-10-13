@@ -2,7 +2,7 @@ const ms = require('ms')
 require('dotenv').config()
 
 const config = {
-    APP_NAME: "hng-task-one",
+    APP_NAME: "my-template",
     domain: {
         API: 'https://api.my-template.com',
         WEB: 'https://my-template.com'
@@ -13,6 +13,11 @@ const config = {
             JWT_SECRET: process.env.JWT_SECRET || "jwt-little-secret",
             TOKEN_EXPIRES_IN: process.env.TOKEN_EXPIRES_IN ? ms(process.env.TOKEN_EXPIRES_IN) : ms("1h"),
             REFRESH_TOKEN_EXPIRES_IN: process.env.REFRESH_TOKEN_EXPIRES_IN ? ms(process.env.REFRESH_TOKEN_EXPIRES_IN) : ms("30d"),
+        },
+        tokens_types: {
+            refresh: 'refresh_token',
+            email_verification: 'email_verification',
+            password_reset: 'password_reset'
         }
     },
     secutiry: {
@@ -26,15 +31,8 @@ const config = {
     },
     database: {
         connection: {
-            MONGO_URI: process.env.MONGO_URI || "mongodb://127.0.0.1:27017/my-templateDB",
-        },
-        access: {
-            DB_TOKEN_EXPIRY_DURATION: process.env.DB_TOKEN_EXPIRY_DURATION ? ms(process.env.DB_TOKEN_EXPIRY_DURATION) : ms("15m"),
+            MONGO_URI: process.env.MONGO_URI,
         }
-    },
-    roles: {
-        USER: ["user", "admin"],
-        ADMIN: ["admin"],
     },
     mail: {
         HOST: process.env.MAILER_HOST,

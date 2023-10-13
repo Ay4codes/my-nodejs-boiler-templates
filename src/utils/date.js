@@ -1,35 +1,44 @@
 const { DateTime } = require('luxon');
 
-class Date {
-    async day() {
+class customDate {
+    now () {
+        return Date.now()
+    }
+
+    day() {
         const day = DateTime.local().setZone('Africa/Lagos').day.toString().padStart(2, '0');
         return (day).toString();
     };
 
-    async yesday() {
+    yesterday() {
         const yesterday = DateTime.local().setZone('Africa/Lagos').minus({ days: 1 }).day.toString().padStart(2, '0');
         return yesterday;
     };
 
-    async month() {
+    month() {
         const month = DateTime.local().setZone('Africa/Lagos').month.toString().padStart(2, '0');
         return (month).toString();
     };
 
-    async year() {
+    year() {
         const year = DateTime.local().setZone('Africa/Lagos').year;
         return (year).toString();
     };
 
-    async date() {
-        const date = Date.now();
-        return (date).toString();
+    date() {
+        const day = DateTime.local().setZone('Africa/Lagos').day.toString().padStart(2, '0');
+        
+        const month = DateTime.local().setZone('Africa/Lagos').month.toString().padStart(2, '0');
+
+        const year = DateTime.local().setZone('Africa/Lagos').year;
+
+        return (day + '-' + month + '-' + year).toString()
     };
 
-    async time() {
+    time() {
         const time = DateTime.local().setZone('Africa/Lagos').toFormat('HH:mm');
         return (time).toString();
     }
 }
 
-export default new Date()
+module.exports = new customDate
