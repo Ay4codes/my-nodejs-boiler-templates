@@ -7,6 +7,7 @@ const customDate = require('../utils/date');
 const { User } = require('../models/user.model');
 
 class tokenServices {
+
     async generateAuthToken(user) {
 
         const refreshToken = crypto.randomBytes(32).toString("hex");
@@ -113,6 +114,7 @@ class tokenServices {
 
         return {success: true, status: 200, message: 'Token Verified Successful'}
     }
+    
 }
 
 module.exports = new tokenServices

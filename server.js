@@ -7,7 +7,6 @@ const { errorMiddlewareConfig } = require('./src/middleware/error.middleware');
 const config = require('./config');
 const numCPUs = require('os').cpus().length;
 
-console.log(config);
 
 if (cluster.isMaster) {
   // Fork workers

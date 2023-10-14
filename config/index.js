@@ -3,10 +3,7 @@ require('dotenv').config()
 
 const config = {
     APP_NAME: "my-template",
-    domain: {
-        API: 'https://api.my-template.com',
-        WEB: 'https://my-template.com'
-    },
+    domain: ['https://api.my-template.com', 'https://my-template.com'],
     BCRYPT_SALT: Number(process.env.BCRYPT_SALT) || 10,
     auth: {
         jwt: {

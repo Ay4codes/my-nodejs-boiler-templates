@@ -7,12 +7,18 @@ const errorMiddlewareConfig = (app) => {
     app.use(Sentry.Handlers.errorHandler());
 
     app.use((err, req, res, next) => {
-        res.status(500).json(customResponse(false, 'Error', 'Something broke!'))
+
+        if (err instanceof SyntaxError && 'body' in err) return res.status(400).json(customResponse(false, 'Error', 'Invalid JSON'));
+        
+        res.status(500).json(customResponse(false, 'Error', err.message))
+
     })
 
     // Handle 404 requests
     app.use("*", (req, res) => {
-        res.status(404).json(response(false, 'Invalid request'));
+
+        res.status(404).json(response(false, 'Invalid request url'));
+
     });
 }
 

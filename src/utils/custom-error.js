@@ -14,10 +14,9 @@ class customErr {
     customTooManyReqErr (err, req, res, next) {
         if (err instanceof RateLimitError) {
             logger.error(`Too many request`);
-            res.status(429).send(response(false, 'Too many request'));
-        } else {
-            next();
+            return res.status(429).send(response(false, 'Too many request'));
         }
+        next();
     }
 }
 

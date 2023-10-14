@@ -8,13 +8,12 @@ const helmet = require('helmet');
 const trimRequestBody = require('../utils/trim-object-strings');
 const Sentry = require('@sentry/node')
 const { domain, sentry } = require('../../config');
-const { limiter } = require('./rate.limit.middleware');
-const logIncomingRequest = require('../logger/incomming-req-logger');
+const { limiter } = require('./rate.limit');
 const helmetConfig = require('./helmetConfig');
 const customError = require('../utils/custom-error');
 
 const corsOptions = {
-    origin: [domain.API, domain.WEB], // List of allowed origins
+    origin: domain, // List of allowed origins
     methods: 'GET', // Only allowed request according to the task given
     allowedHeaders: 'Content-Type,Authorization',
 };
