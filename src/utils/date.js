@@ -2,7 +2,8 @@ const { DateTime } = require('luxon');
 
 class customDate {
     now () {
-        return Date.now()
+        const date = Date.now()
+        return date
     }
 
     day() {

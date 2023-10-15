@@ -1,11 +1,10 @@
 const Joi = require('joi');
-const mongoose = require('mongoose');
 
-class Validator {
+class ValidationSchema {
 
     constructor() {
 
-        this.registerationSchema = Joi.object({
+        this.register = Joi.object({
 
             firstname: Joi.string().min(3).max(30).required().label('first name'),
 
@@ -21,8 +20,21 @@ class Validator {
 
         });
 
+        this.login = Joi.object({
+
+            email: Joi.string().email().required().label('email'),
+
+            password: Joi.string().min(8).required().label('password').regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/).message('Password must contain at least one lowercase letter, one uppercase letter, and one digit')
+
+        })
+
+        this.logout = Joi.object({
+
+            refresh_token: Joi.string().required().label('refresh token')
+
+        })
 
     }
 }
 
-module.exports = new Validator
+module.exports = new ValidationSchema

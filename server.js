@@ -28,7 +28,7 @@ if (cluster.isMaster) {
 
   app.listen(3000, () => {
     // Initialize mongoDB connection
-    // require('./src/database/mongo')
+    require('./src/database/mongo')
       
     logger.info(`Server Started Successfully`);
   })

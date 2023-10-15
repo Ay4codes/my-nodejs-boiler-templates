@@ -1,8 +1,9 @@
-const response = (status, message, data) => {
+const response = (status, message, data, issue) => {
     return {
         status: status,
         message: message,
-        data: data
+        data: data,
+        issue: issue
     }
 }
 

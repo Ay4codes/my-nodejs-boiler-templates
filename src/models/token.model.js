@@ -11,7 +11,7 @@ const tokenSchema = mongoose.Schema({
     token: {
         type: String,
         required: false,
-        default: null
+        default: null,
     },
     type: {
         type: String,
@@ -26,13 +26,13 @@ const tokenSchema = mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         required: true,
     },
-    expired_at: {
+    expiredAt: {
         type: Date,
         required: true,
         default: customDate.now,
         expires: config.auth.jwt.TOKEN_EXPIRES_IN
     }
-}, {timestamp: true})
+}, {timestamps: true})
 
 // set mongoose options to have lean turned on by default | ref: https://itnext.io/performance-tips-for-mongodb-mongoose-190732a5d382
 mongoose.Query.prototype.setOptions = function () {

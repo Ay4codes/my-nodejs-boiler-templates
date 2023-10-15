@@ -10,7 +10,7 @@ const errorMiddlewareConfig = (app) => {
 
         if (err instanceof SyntaxError && 'body' in err) return res.status(400).json(customResponse(false, 'Error', 'Invalid JSON'));
         
-        res.status(500).json(customResponse(false, 'Error', err.message))
+        return res.status(500).json(customResponse(false, 'Error', err.message))
 
     })
 

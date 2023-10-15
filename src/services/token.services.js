@@ -14,13 +14,14 @@ class tokenServices {
 
         const hashedRefreshToken = bcrypt.hashSync(refreshToken, config.BCRYPT_SALT);
 
-        await new Token({user: user._id, token: hashedRefreshToken, type: config.auth.tokens_types.refresh, expired_at: customDate.now + config.auth.jwt.REFRESH_TOKEN_EXPIRES_IN}).save()
+        await new Token({user: user._id, token: hashedRefreshToken, type: config.auth.tokens_types.refresh, expiredAt: customDate.now() + config.auth.jwt.REFRESH_TOKEN_EXPIRES_IN}).save()
 
         const accessTokenJwt = jwt.sign({ user_id: user._id, role: user.role, email: user.email }, config.auth.jwt.JWT_SECRET, { expiresIn: config.auth.jwt.TOKEN_EXPIRES_IN / 1000});
 
         const refreshTokenJwt = jwt.sign({ user_id: user._id, refresh_token: refreshToken}, config.auth.jwt.JWT_SECRET, { expiresIn: config.auth.jwt.REFRESH_TOKEN_EXPIRES_IN / 1000});
 
         return {success: true, status: 200, data: {token: accessTokenJwt, refresh_token: refreshTokenJwt}}
+
     }
 
 
@@ -46,9 +47,11 @@ class tokenServices {
 
                 return await this.generateAuthToken(user) 
             }
+
         }
 
         return {success: false, status: 401, message: 'Refresh token is invalid'}
+
     }
 
 
@@ -72,9 +75,11 @@ class tokenServices {
 
                 return {success: true, status: 200, message: 'Refresh token revoke successful'}
             }
+            
         }
 
-        return {success: false, status: 401, message: 'Refresh token is invalid'}
+        return {success: false, status: 409, message: 'Refresh token is invalid'}
+
     }
 
 
@@ -92,9 +97,10 @@ class tokenServices {
 
         const hashedToken = bcrypt.hashSync(token, config.BCRYPT_SALT)
 
-        await new Token({code: hashedCode, token: hashedToken, user: user._id, type: token_type, expired_at: customDate.now + config.auth.jwt.REFRESH_TOKEN_EXPIRES_IN}).save()
+        await new Token({code: hashedCode, token: hashedToken, user: user._id, type: token_type, expiredAt: customDate.now() + config.auth.jwt.REFRESH_TOKEN_EXPIRES_IN}).save()
 
         return {success: true, status: 200, data: {code: code, token: token}}
+
     }
 
 
@@ -102,17 +108,31 @@ class tokenServices {
 
         const findToken = await Token.findOne({user: user._id, type: token_type})
 
-        if (!findToken) return {success: false, message: "Token is exipred"}
+        if (!findToken) return {success: false, status: 401, message: "Token is exipred", issue: '-token_expired'}
 
         const verifyCode = bcrypt.compare(code, findToken.code)
 
         const verifyToken = bcrypt.compare(token, findToken.token)
 
-        if (!verifyCode && !verifyToken) return {success: false, status: 401, message: 'Token and Code is Invalid'}
+        if (!verifyCode && !verifyToken) return {success: false, status: 401, message: 'Token and Code is Invalid', issue: '-token_invalid'}
 
         await Token.deleteOne({user: user._id, type: token_type})
 
         return {success: true, status: 200, message: 'Token Verified Successful'}
+
+    }
+
+
+    async decodeToken(token) {
+
+        jwt.verify(token, config.auth.jwt.JWT_SECRET, function(err, decoded) {
+
+            if (err) return {status: false}
+
+            return {status: true, user: decoded}
+
+        });
+
     }
     
 }

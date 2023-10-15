@@ -18,7 +18,11 @@ const userSchema = mongoose.Schema({
     phone_number: {
         type: String,
         required: false,
-        unique: true
+    },
+    account_disabled: {
+        type: Boolean,
+        required: true,
+        default: false,
     },
     email_verified: {
         type: Boolean,
@@ -59,8 +63,9 @@ const userSchema = mongoose.Schema({
         custom_date: {type: String, default: customDate.date},
         date: {type: Date, default: customDate.now}
     },
-}, {timestamp: true})
+}, {timestamps: true})
 
+  
 // set mongoose options to have lean turned on by default | ref: https://itnext.io/performance-tips-for-mongodb-mongoose-190732a5d382
 mongoose.Query.prototype.setOptions = function () {
     if (this.mongooseOptions().lean == null) {

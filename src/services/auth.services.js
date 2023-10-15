@@ -1,17 +1,74 @@
+const { BCRYPT_SALT } = require("../../config");
 const {User} = require("../models/user.model")
-const Validator = require('../utils/validators.schema')
+const ValidationSchema = require('../utils/validators.schema')
+const bcrypt = require('bcrypt');
+const tokenServices = require("./token.services");
 
 class authServices {
 
     async register (body) {
 
-        const {error, value: data} = Validator.registerationSchema.validate(body)
+        const {error, value: data} = ValidationSchema.register.validate(body)
 
         if (error) return {success: false, status: 400, message: error.message}
 
-        console.log(data); // WIP
+        const query = [{email: data.email}]
 
-        // const userExist = await User.findOne({email: data.email, ...(data.phone_number ? { phone_number: data.phone_number } : {}), })
+        const hashedPassword = bcrypt.hashSync(data.password, BCRYPT_SALT)
+
+        const newUser = {first_name: data.firstname, last_name: data.lastname, email: data.email, password: hashedPassword}
+
+        data.phone_number && (query.push({ phone_number: data.phone_number }), newUser.phone_number = data.phone_number);
+
+        const userExist = await User.findOne({ $or: query})
+
+        if (userExist) return {success: false, status: 409, message: `User already exist`}
+
+        const user = await new User(newUser).save()
+
+        const token = await tokenServices.generateAuthToken(user)
+
+        return {success: true, status: 201, message: `User registeration successful`, data: {token: token.data, user: user}}
+
+    }
+
+
+    async login (body) {
+
+        const {error, value: data} = ValidationSchema.login.validate(body)
+
+        if (error) return {success: false, status: 400, message: error.message}
+
+        const user = await User.findOne({email: data.email}).select('+password')
+
+        if (!user) return {success: false, status: 401, message: 'User does not exist'}
+
+        const verifyPassword = await bcrypt.compare(data.password, user.password)
+
+        if (!verifyPassword) return {success: false, status: 401, message: 'Invalid credentials'}
+
+        if (user.account_disabled) return {success: false, status: 401, message: 'Account disabled. If you believe this is a mistake, please contact our support team for assistance.', issue: '-account_disabled'}
+
+        const token = await tokenServices.generateAuthToken(user)
+
+        if (!user.email_verified) return {success: true, status: 200, message: 'Login successful', data: {token: token.data}, issue: '-email_not_verified'}
+
+        if (!user.identity_verified) return {success: true, status: 200, message: 'Login successful', data: {token: token.data}, issue: '-identity_not_verified'}
+
+    }
+
+
+    async logout (headers) {
+
+        const {error, value: data} = ValidationSchema.logout.validate(headers)
+
+        if (error) return {success: false, status: 400, message: error.message}
+
+        const revokeToken = await tokenServices.revokeRefreshToken(data.refresh_token)
+
+        if (!revokeToken.success) return {success: revokeToken.success, status: revokeToken.status, message: revokeToken.message}
+
+        return {success: true, status: 200, message: 'Logout successful'}
 
     }
 
