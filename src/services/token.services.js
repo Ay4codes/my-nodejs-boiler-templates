@@ -27,58 +27,64 @@ class tokenServices {
 
     async refreshAuthToken(refresh_token_jwt) {
 
-        const refreshTokenValue = jwt.verify(refresh_token_jwt, config.auth.jwt.JWT_SECRET)
+        const refreshTokenValue = await this.decodeToken(refresh_token_jwt)
 
-        const findRefreshToken = await Token.find({user: refreshTokenValue?.user_id, type: config.auth.tokens_types.refresh})
+        if (!refreshTokenValue.status) return {success: false, status: 403, message: 'Refresh token is expired'}
 
-        if (findRefreshToken.length === 0) return {success: false, status: 401, message: 'Refresh token is expired'}
+        const findRefreshToken = await Token.find({user: refreshTokenValue.user.user_id, type: config.auth.tokens_types.refresh})
+
+        if (findRefreshToken.length === 0) return {success: false, status: 403, message: 'Refresh token is expired'}
 
         for (let i = 0; i < findRefreshToken.length; i++) {
 
             const token = findRefreshToken[i];
             
-            const verifyToken = await bcrypt.compare(refreshTokenValue.refresh_token, token.token)
+            const verifyToken = await bcrypt.compare(refreshTokenValue.user.refresh_token, token.token)
 
             if (verifyToken) {
 
                 await Token.deleteOne({_id: token._id})
 
-                const user = await User.findOne({_id: refreshTokenValue.user_id})
+                const user = await User.findOne({_id: refreshTokenValue.user.user_id})
 
-                return await this.generateAuthToken(user) 
+                return await this.generateAuthToken(user)
+
             }
 
         }
 
-        return {success: false, status: 401, message: 'Refresh token is invalid'}
+        return {success: false, status: 403, message: 'Refresh token is expired'}
 
     }
 
 
     async revokeRefreshToken(refresh_token_jwt) {
 
-        const refreshTokenValue = jwt.verify(refresh_token_jwt, config.auth.jwt.JWT_SECRET)
+        const refreshTokenValue = await this.decodeToken(refresh_token_jwt)
 
-        const findRefreshToken = await Token.find({user: refreshTokenValue?.user_id, type: config.auth.tokens_types.refresh})
+        if (!refreshTokenValue.status) return {success: false, status: 403, message: 'Refresh token is expired'}
 
-        if (findRefreshToken.length === 0) return {success: false, status: 401, message: 'Refresh token is expired'}
+        const findRefreshToken = await Token.find({user: refreshTokenValue.user.user_id, type: config.auth.tokens_types.refresh})
+
+        if (findRefreshToken.length === 0) return {success: false, status: 403, message: 'Refresh token is expired'}
 
         for (let i = 0; i < findRefreshToken.length; i++) {
 
             const token = findRefreshToken[i];
             
-            const verifyToken = await bcrypt.compare(refreshTokenValue.refresh_token, token.token)
+            const verifyToken = await bcrypt.compare(refreshTokenValue.user.refresh_token, token.token)
 
             if (verifyToken) {
 
                 await Token.deleteOne({_id: token._id})
 
                 return {success: true, status: 200, message: 'Refresh token revoke successful'}
+                
             }
             
         }
 
-        return {success: false, status: 409, message: 'Refresh token is invalid'}
+        return {success: false, status: 401, message: 'Refresh token is invalid'}
 
     }
 
@@ -108,13 +114,13 @@ class tokenServices {
 
         const findToken = await Token.findOne({user: user._id, type: token_type})
 
-        if (!findToken) return {success: false, status: 401, message: "Token is exipred", issue: '-token_expired'}
+        if (!findToken) return {success: false, status: 403, message: "Token is exipred"}
 
         const verifyCode = bcrypt.compare(code, findToken.code)
 
         const verifyToken = bcrypt.compare(token, findToken.token)
 
-        if (!verifyCode && !verifyToken) return {success: false, status: 401, message: 'Token and Code is Invalid', issue: '-token_invalid'}
+        if (!verifyCode && !verifyToken) return {success: false, status: 401, message: 'Token and Code is Invalid'}
 
         await Token.deleteOne({user: user._id, type: token_type})
 
@@ -122,16 +128,25 @@ class tokenServices {
 
     }
 
-
     async decodeToken(token) {
+
+        let result
 
         jwt.verify(token, config.auth.jwt.JWT_SECRET, function(err, decoded) {
 
-            if (err) return {status: false}
+            if (err) {
 
-            return {status: true, user: decoded}
+                result = {status: false, user: null}
+
+            } else {
+
+                result = {status: true, user: decoded}
+
+            }
 
         });
+
+        return result
 
     }
     

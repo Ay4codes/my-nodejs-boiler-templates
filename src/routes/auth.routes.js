@@ -8,4 +8,6 @@ router.post('/login', authCtrl.loginUser)
 
 router.get('/logout', authCtrl.logoutUser)
 
+router.get('/refresh-tokens', authCtrl.refreshToken)
+
 module.exports = router;

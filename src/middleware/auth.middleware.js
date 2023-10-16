@@ -14,17 +14,17 @@ class Auth {
 
         if (!decodedToken.status) return res.status(409).json(response(false, 'Auth token expired'))
 
-        const user = await User.findOne({_id: decodedToken.user_id})
+        const user = await User.findOne({_id: decodedToken.user.user_id})
 
         if (!user) return res.status(401).json(response(false, 'User not found'))
 
-        if (user.account_disabled) return res.status(401).json(response(false, 'User account disabled'))
+        if (user.account_disabled) return res.status(401).json(response(false, 'Account disabled'))
 
         if (user.email_verified) return res.status(401).json(response(false, 'Email not verified'))
 
         if (user.identity_verified) return res.status(401).json(response(false, 'Identity not verified'))
 
-        await User.updateOne({_id: decodedToken.user_id}, {last_seen: customDate.now()})
+        await User.updateOne({_id: decodedToken.user.user_id}, {last_seen: customDate.now()})
 
         Sentry.setUser({id: (user._id).toString(), email: user.email})
 

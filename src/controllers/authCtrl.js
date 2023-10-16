@@ -18,6 +18,11 @@ class AuthCtrl {
         res.status(logout.status).json(response(logout.success, logout.message, logout.data))
     }
 
+    async refreshToken(req, res) {
+        const refreshToken = await authServices.refreshToken({refresh_token: req.headers.refresh_token})
+        res.status(refreshToken.status).json(response(refreshToken.success, refreshToken.message, refreshToken.data))
+    }
+
 }
 
 module.exports = new AuthCtrl
