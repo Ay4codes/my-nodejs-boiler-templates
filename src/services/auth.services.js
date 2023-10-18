@@ -3,6 +3,7 @@ const {User} = require("../models/user.model")
 const ValidationSchema = require('../utils/validators.schema')
 const bcrypt = require('bcrypt');
 const TokenServices = require("./token.services");
+const mailerServices = require("./mailer.services");
 
 class AuthServices {
 
@@ -27,6 +28,8 @@ class AuthServices {
         const user = await new User(newUser).save()
 
         const token = await TokenServices.generateAuthToken(user)
+
+        await mailerServices.sendWelcomeEmail(user)
 
         return {success: true, status: 201, message: `User registeration successful`, data: {token: token.data, user: user}}
 
@@ -88,7 +91,7 @@ class AuthServices {
     }
 
 
-    async requestemailverification (body) {
+    async requestEmailVerification (body) {
 
         const d = '' // WIP
 

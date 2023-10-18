@@ -4,7 +4,8 @@
   "description": "my-nodejs-boiler-template",
   "main": "server.js",
   "scripts": {
-    "test": "node server.js"
+    "test": "node server.js",
+    "prepare": "husky install"
   },
   "engines": {
     "node": "18.18.1"
@@ -23,6 +24,7 @@
     "express": "^4.18.2",
     "express-rate-limit": "^6.11.2",
     "helmet": "^7.0.0",
+    "husky": "^8.0.3",
     "joi": "^17.10.2",
     "jsonwebtoken": "^9.0.2",
     "luxon": "^3.4.3",

@@ -1,6 +1,6 @@
 const Layout = require("../layout/default-layout")
 
-const WelcomeUserEmail = (firstname) => {
+const EmailVerificationEmail = (firstname) => {
 
     return (
         Layout(`
