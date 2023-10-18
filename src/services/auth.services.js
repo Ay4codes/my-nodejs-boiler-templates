@@ -93,7 +93,7 @@ class AuthServices {
 
     async requestEmailVerification (body) {
 
-        const d = '' // WIP
+        const token = '' // WIP
 
     }
 

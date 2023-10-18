@@ -6,11 +6,11 @@ const EmailVerificationEmail = (firstname) => {
         Layout(`
             <section>
                 <h3>Hi ${firstname} 👋</h3>
-                <p>Welcome to the template. Enjoy !!!</p>
+                <p>Email verification !!!</p>
             </section>
         `)
     )
 
 }
 
-module.exports = WelcomeUserEmail
+module.exports = EmailVerificationEmail

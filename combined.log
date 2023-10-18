@@ -1571,3 +1571,109 @@
 {"level":"info","message":"Connected to Mongo DB Database!","timestamp":"2023-10-18T10:32:58.724Z"}
 {"level":"info","message":"Connected to Mongo DB Database!","timestamp":"2023-10-18T10:32:58.804Z"}
 {"level":"info","message":"Connected to Mongo DB Database!","timestamp":"2023-10-18T10:32:58.867Z"}
+{"level":"info","message":"Server Started Successfully","timestamp":"2023-10-18T14:32:15.238Z"}
+{"level":"info","message":"Server Started Successfully","timestamp":"2023-10-18T14:32:15.245Z"}
+{"level":"info","message":"Server Started Successfully","timestamp":"2023-10-18T14:32:15.252Z"}
+{"level":"info","message":"Server Started Successfully","timestamp":"2023-10-18T14:32:15.255Z"}
+{"level":"info","message":"Server Started Successfully","timestamp":"2023-10-18T14:32:15.256Z"}
+{"level":"info","message":"Server Started Successfully","timestamp":"2023-10-18T14:32:15.269Z"}
+{"level":"info","message":"Server Started Successfully","timestamp":"2023-10-18T14:32:15.289Z"}
+{"level":"info","message":"Server Started Successfully","timestamp":"2023-10-18T14:32:15.301Z"}
+{"level":"info","message":"Server Started Successfully","timestamp":"2023-10-18T14:32:29.422Z"}
+{"level":"info","message":"Server Started Successfully","timestamp":"2023-10-18T14:32:29.422Z"}
+{"level":"info","message":"Server Started Successfully","timestamp":"2023-10-18T14:32:29.423Z"}
+{"level":"info","message":"Server Started Successfully","timestamp":"2023-10-18T14:32:29.437Z"}
+{"level":"info","message":"Server Started Successfully","timestamp":"2023-10-18T14:32:29.457Z"}
+{"level":"info","message":"Server Started Successfully","timestamp":"2023-10-18T14:32:29.479Z"}
+{"level":"info","message":"Server Started Successfully","timestamp":"2023-10-18T14:32:29.490Z"}
+{"level":"info","message":"Server Started Successfully","timestamp":"2023-10-18T14:32:29.497Z"}
+{"level":"info","message":"Server Started Successfully","timestamp":"2023-10-18T14:39:49.059Z"}
+{"level":"info","message":"Server Started Successfully","timestamp":"2023-10-18T14:39:49.079Z"}
+{"level":"info","message":"Server Started Successfully","timestamp":"2023-10-18T14:39:49.102Z"}
+{"level":"info","message":"Server Started Successfully","timestamp":"2023-10-18T14:39:49.114Z"}
+{"level":"info","message":"Server Started Successfully","timestamp":"2023-10-18T14:39:49.115Z"}
+{"level":"info","message":"Server Started Successfully","timestamp":"2023-10-18T14:39:49.120Z"}
+{"level":"info","message":"Server Started Successfully","timestamp":"2023-10-18T14:39:49.122Z"}
+{"level":"info","message":"Server Started Successfully","timestamp":"2023-10-18T14:39:49.139Z"}
+{"level":"info","message":"Connected to mailer server smtp.gmail.com:587","timestamp":"2023-10-18T14:39:50.560Z"}
+{"level":"info","message":"Connected to mailer server smtp.gmail.com:587","timestamp":"2023-10-18T14:39:50.580Z"}
+{"level":"info","message":"Connected to mailer server smtp.gmail.com:587","timestamp":"2023-10-18T14:39:50.722Z"}
+{"level":"info","message":"Connected to mailer server smtp.gmail.com:587","timestamp":"2023-10-18T14:39:50.877Z"}
+{"level":"info","message":"Connected to mailer server smtp.gmail.com:587","timestamp":"2023-10-18T14:39:50.928Z"}
+{"level":"info","message":"Connected to mailer server smtp.gmail.com:587","timestamp":"2023-10-18T14:39:50.931Z"}
+{"level":"info","message":"Connected to mailer server smtp.gmail.com:587","timestamp":"2023-10-18T14:39:50.967Z"}
+{"level":"info","message":"Connected to mailer server smtp.gmail.com:587","timestamp":"2023-10-18T14:39:51.031Z"}
+{"level":"info","message":"Connected to Mongo DB Database!","timestamp":"2023-10-18T14:39:52.499Z"}
+{"level":"info","message":"Connected to Mongo DB Database!","timestamp":"2023-10-18T14:39:52.506Z"}
+{"level":"info","message":"Connected to Mongo DB Database!","timestamp":"2023-10-18T14:39:52.548Z"}
+{"level":"info","message":"Connected to Mongo DB Database!","timestamp":"2023-10-18T14:39:52.549Z"}
+{"level":"info","message":"Connected to Mongo DB Database!","timestamp":"2023-10-18T14:39:52.578Z"}
+{"level":"info","message":"Connected to Mongo DB Database!","timestamp":"2023-10-18T14:39:52.674Z"}
+{"level":"info","message":"Connected to Mongo DB Database!","timestamp":"2023-10-18T14:39:52.686Z"}
+{"level":"info","message":"Connected to Mongo DB Database!","timestamp":"2023-10-18T14:39:52.686Z"}
+{"level":"info","message":"Server Started Successfully","timestamp":"2023-10-18T14:42:57.631Z"}
+{"level":"info","message":"Server Started Successfully","timestamp":"2023-10-18T14:42:57.716Z"}
+{"level":"info","message":"Server Started Successfully","timestamp":"2023-10-18T14:42:57.727Z"}
+{"level":"info","message":"Server Started Successfully","timestamp":"2023-10-18T14:42:57.822Z"}
+{"level":"info","message":"Server Started Successfully","timestamp":"2023-10-18T14:42:57.822Z"}
+{"level":"info","message":"Server Started Successfully","timestamp":"2023-10-18T14:42:57.825Z"}
+{"level":"info","message":"Server Started Successfully","timestamp":"2023-10-18T14:42:57.867Z"}
+{"level":"info","message":"Server Started Successfully","timestamp":"2023-10-18T14:42:57.932Z"}
+{"level":"info","message":"Connected to mailer server smtp.gmail.com:587","timestamp":"2023-10-18T14:42:59.901Z"}
+{"level":"info","message":"Connected to mailer server smtp.gmail.com:587","timestamp":"2023-10-18T14:43:00.031Z"}
+{"level":"info","message":"Connected to mailer server smtp.gmail.com:587","timestamp":"2023-10-18T14:43:00.966Z"}
+{"level":"info","message":"Connected to mailer server smtp.gmail.com:587","timestamp":"2023-10-18T14:43:01.061Z"}
+{"level":"info","message":"Connected to mailer server smtp.gmail.com:587","timestamp":"2023-10-18T14:43:01.182Z"}
+{"level":"info","message":"Server Started Successfully","timestamp":"2023-10-18T14:44:57.123Z"}
+{"level":"info","message":"Server Started Successfully","timestamp":"2023-10-18T14:44:57.148Z"}
+{"level":"info","message":"Server Started Successfully","timestamp":"2023-10-18T14:44:57.187Z"}
+{"level":"info","message":"Server Started Successfully","timestamp":"2023-10-18T14:44:57.235Z"}
+{"level":"info","message":"Server Started Successfully","timestamp":"2023-10-18T14:44:57.271Z"}
+{"level":"info","message":"Server Started Successfully","timestamp":"2023-10-18T14:44:57.281Z"}
+{"level":"info","message":"Server Started Successfully","timestamp":"2023-10-18T14:44:57.283Z"}
+{"level":"info","message":"Server Started Successfully","timestamp":"2023-10-18T14:44:57.324Z"}
+{"level":"info","message":"Connected to mailer server smtp.gmail.com:587","timestamp":"2023-10-18T14:44:58.639Z"}
+{"level":"info","message":"Connected to mailer server smtp.gmail.com:587","timestamp":"2023-10-18T14:44:58.639Z"}
+{"level":"info","message":"Connected to mailer server smtp.gmail.com:587","timestamp":"2023-10-18T14:44:58.643Z"}
+{"level":"info","message":"Connected to mailer server smtp.gmail.com:587","timestamp":"2023-10-18T14:44:58.674Z"}
+{"level":"info","message":"Connected to mailer server smtp.gmail.com:587","timestamp":"2023-10-18T14:44:58.674Z"}
+{"level":"info","message":"Connected to mailer server smtp.gmail.com:587","timestamp":"2023-10-18T14:44:58.675Z"}
+{"level":"info","message":"Connected to mailer server smtp.gmail.com:587","timestamp":"2023-10-18T14:44:58.702Z"}
+{"level":"info","message":"Connected to Mongo DB Database!","timestamp":"2023-10-18T14:45:00.113Z"}
+{"level":"info","message":"Connected to Mongo DB Database!","timestamp":"2023-10-18T14:45:00.147Z"}
+{"level":"info","message":"Connected to Mongo DB Database!","timestamp":"2023-10-18T14:45:00.304Z"}
+{"level":"info","message":"Connected to Mongo DB Database!","timestamp":"2023-10-18T14:45:00.309Z"}
+{"level":"info","message":"Connected to Mongo DB Database!","timestamp":"2023-10-18T14:45:00.316Z"}
+{"level":"info","message":"Connected to Mongo DB Database!","timestamp":"2023-10-18T14:45:00.354Z"}
+{"level":"info","message":"Connected to Mongo DB Database!","timestamp":"2023-10-18T14:45:00.354Z"}
+{"level":"info","message":"Connected to Mongo DB Database!","timestamp":"2023-10-18T14:45:00.368Z"}
+{"level":"info","message":"Server Started Successfully","timestamp":"2023-10-18T14:48:38.927Z"}
+{"level":"info","message":"Server Started Successfully","timestamp":"2023-10-18T14:48:38.933Z"}
+{"level":"info","message":"Server Started Successfully","timestamp":"2023-10-18T14:48:38.945Z"}
+{"level":"info","message":"Server Started Successfully","timestamp":"2023-10-18T14:48:38.953Z"}
+{"level":"info","message":"Server Started Successfully","timestamp":"2023-10-18T14:48:38.958Z"}
+{"level":"info","message":"Server Started Successfully","timestamp":"2023-10-18T14:48:38.991Z"}
+{"level":"info","message":"Server Started Successfully","timestamp":"2023-10-18T14:48:38.993Z"}
+{"level":"info","message":"Server Started Successfully","timestamp":"2023-10-18T14:48:39.016Z"}
+{"level":"info","message":"Connected to mailer server smtp.gmail.com:587","timestamp":"2023-10-18T14:48:40.540Z"}
+{"level":"info","message":"Connected to mailer server smtp.gmail.com:587","timestamp":"2023-10-18T14:48:40.540Z"}
+{"level":"info","message":"Connected to mailer server smtp.gmail.com:587","timestamp":"2023-10-18T14:48:40.540Z"}
+{"level":"info","message":"Connected to mailer server smtp.gmail.com:587","timestamp":"2023-10-18T14:48:40.636Z"}
+{"level":"info","message":"Connected to mailer server smtp.gmail.com:587","timestamp":"2023-10-18T14:48:40.690Z"}
+{"level":"info","message":"Connected to mailer server smtp.gmail.com:587","timestamp":"2023-10-18T14:48:40.709Z"}
+{"level":"info","message":"Connected to mailer server smtp.gmail.com:587","timestamp":"2023-10-18T14:48:40.864Z"}
+{"level":"info","message":"Connected to mailer server smtp.gmail.com:587","timestamp":"2023-10-18T14:48:40.864Z"}
+{"level":"info","message":"Connected to Mongo DB Database!","timestamp":"2023-10-18T14:48:42.717Z"}
+{"level":"info","message":"Connected to Mongo DB Database!","timestamp":"2023-10-18T14:48:42.717Z"}
+{"level":"info","message":"Connected to Mongo DB Database!","timestamp":"2023-10-18T14:48:42.717Z"}
+{"level":"info","message":"Connected to Mongo DB Database!","timestamp":"2023-10-18T14:48:42.717Z"}
+{"level":"info","message":"Connected to Mongo DB Database!","timestamp":"2023-10-18T14:48:42.717Z"}
+{"level":"info","message":"Connected to Mongo DB Database!","timestamp":"2023-10-18T14:48:42.717Z"}
+{"level":"info","message":"Server Started Successfully","timestamp":"2023-10-18T14:50:22.142Z"}
+{"level":"info","message":"Server Started Successfully","timestamp":"2023-10-18T14:50:22.158Z"}
+{"level":"info","message":"Server Started Successfully","timestamp":"2023-10-18T14:50:22.165Z"}
+{"level":"info","message":"Server Started Successfully","timestamp":"2023-10-18T14:50:22.188Z"}
+{"level":"info","message":"Server Started Successfully","timestamp":"2023-10-18T14:50:22.192Z"}
+{"level":"info","message":"Server Started Successfully","timestamp":"2023-10-18T14:50:22.197Z"}
+{"level":"info","message":"Server Started Successfully","timestamp":"2023-10-18T14:50:22.199Z"}
+{"level":"info","message":"Server Started Successfully","timestamp":"2023-10-18T14:50:22.205Z"}
