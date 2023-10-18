@@ -1,4 +1,4 @@
-const { BCRYPT_SALT } = require("../../config");
+const { BCRYPT_SALT, auth } = require("../../config");
 const {User} = require("../models/user.model")
 const ValidationSchema = require('../utils/validators.schema')
 const bcrypt = require('bcrypt');
@@ -29,7 +29,9 @@ class AuthServices {
 
         const token = await TokenServices.generateAuthToken(user)
 
-        await mailerServices.sendWelcomeEmail(user)
+        const emailVerification = await TokenServices.genereteToken(user, auth.tokens_types.email_verification)
+
+        await mailerServices.sendWelcomeEmail(user, emailVerification.data)
 
         return {success: true, status: 201, message: `User registeration successful`, data: {token: token.data, user: user}}
 

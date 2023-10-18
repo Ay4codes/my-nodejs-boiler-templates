@@ -120,13 +120,24 @@ class TokenServices {
 
         const verifyToken = bcrypt.compare(token, findToken.token)
 
-        if (!verifyCode && !verifyToken) return {success: false, status: 401, message: 'Token and Code is Invalid'}
+        if (!token) {
+
+            if (!verifyCode) return {success: false, status: 401, message: 'Code is Invalid'}
+
+            await Token.deleteOne({user: user._id, type: token_type})
+
+            return {success: true, status: 200, message: 'Token Verified Successful'}
+
+        }
+
+        if (!verifyToken || !verifyCode) return {success: false, status: 401, message: 'Code or Token is Invalid'}
 
         await Token.deleteOne({user: user._id, type: token_type})
 
         return {success: true, status: 200, message: 'Token Verified Successful'}
 
     }
+
 
     async decodeToken(token) {
 

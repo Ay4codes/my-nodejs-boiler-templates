@@ -2,7 +2,7 @@ const ms = require('ms')
 require('dotenv').config()
 
 const config = {
-    APP_NAME: "my-template",
+    APP_NAME: "My-Template",
     domain: {
         BASE_URL: 'https://api.my-template.com',
         LANDING_URL: 'https://my-template.com'
@@ -36,10 +36,11 @@ const config = {
     },
     mailer: {
         HOST: process.env.MAILER_HOST,
-        PASSWORD: process.env.MAILER_PASSWORD,
         PORT: process.env.MAILER_PORT,
         SECURE: process.env.MAILER_SECURE === 'true' ? false : false,
-        DEFAULT_FROM: process.env.DEFAULT_FROM
+        USER: process.env.MAILER_USER,
+        PASSWORD: process.env.MAILER_PASSWORD,
+        DEFAULT_FROM: `${"The Template Team"} <${process.env.MAILER_USER}>`
     },
     sentry: {
         DSN: process.env.SENTRY_DSN,

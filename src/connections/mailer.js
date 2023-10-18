@@ -1,13 +1,22 @@
 const nodemailer = require('nodemailer');
-const { mailer } = require('../config');
-const config = require('../config');
-const logger = require("../src/logger");
+const { mailer } = require('../../config');
+const config = require('../../config');
+const logger = require("../logger");
 
 class Mailer {
 
     constructor() {
 
         if (!Mailer.instance) {
+
+            if (!mailer.HOST) return logger.error('SMTP-HOST required. --not Found')
+
+            if (!mailer.PORT) return logger.error('SMTP-PORT required. --not Found')
+
+            if (!mailer.DEFAULT_FROM) return logger.error('SMTP-USER required. --not Found')
+
+            if (!mailer.PASSWORD) return logger.error('SMTP-PASSWORD required. --not Found')
+
 
             this.transporter = nodemailer.createTransport({
 
@@ -19,7 +28,7 @@ class Mailer {
                 
                 auth: {
 
-                    user: mailer.DEFAULT_FROM,
+                    user: mailer.USER,
 
                     pass: mailer.PASSWORD,
                 

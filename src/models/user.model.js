@@ -34,6 +34,11 @@ const userSchema = mongoose.Schema({
         required: true,
         default: false,
     },
+    is_new_user: {
+        type: Boolean,
+        required: true,
+        default: true,
+    },
     country: {
         type: String,
         required: true,
@@ -54,6 +59,12 @@ const userSchema = mongoose.Schema({
         type: String,
         required: true,
         select: false
+    },
+    role: {
+        type: String,
+        required: true,
+        enum: ["credentials", 'google'],
+        default: "credentials"
     },
     date: {
         day: {type: String, default: CustomDate.day},

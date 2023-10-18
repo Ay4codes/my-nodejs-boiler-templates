@@ -5,8 +5,8 @@ const logger = require('./src/logger');
 const { whiteListIpAddress } = require('./src/middleware/ips.middleware');
 const { errorMiddlewareConfig } = require('./src/middleware/error.middleware');
 const config = require('./config');
-const { connectMongoDB } = require('./connections/mongo');
-const Mailer = require('./connections/mailer');
+const { connectMongoDB } = require('./src/connections/mongo');
+const Mailer = require('./src/connections/mailer');
 const numCPUs = require('os').cpus().length;
 
 
