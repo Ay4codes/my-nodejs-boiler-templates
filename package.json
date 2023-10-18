@@ -9,11 +9,6 @@
   "engines": {
     "node": "18.18.1"
   },
-  "husky": {
-    "hooks": {
-      "pre-commit": "npm run test"
-    }
-  },
   "author": "Ayomide Ishola",
   "license": "ISC",
   "dependencies": {
@@ -37,8 +32,5 @@
     "os": "^0.1.2",
     "path": "^0.12.7",
     "winston": "^3.10.0"
-  },
-  "devDependencies": {
-    "husky": "^8.0.3"
   }
 }
