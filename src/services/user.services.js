@@ -1,6 +1,6 @@
 
-class userServices {
+class UserServices {
     
 }
 
-module.exports = new userServices
+module.exports = new UserServices

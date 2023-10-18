@@ -3,7 +3,10 @@ require('dotenv').config()
 
 const config = {
     APP_NAME: "my-template",
-    domain: ['https://api.my-template.com', 'https://my-template.com'],
+    domain: {
+        BASE_URL: 'https://api.my-template.com',
+        LANDING_URL: 'https://my-template.com'
+    },
     BCRYPT_SALT: Number(process.env.BCRYPT_SALT) || 10,
     auth: {
         jwt: {
@@ -31,16 +34,12 @@ const config = {
             MONGO_URI: process.env.MONGO_URI,
         }
     },
-    mail: {
+    mailer: {
         HOST: process.env.MAILER_HOST,
-        USER: process.env.MAILER_USER,
         PASSWORD: process.env.MAILER_PASSWORD,
         PORT: process.env.MAILER_PORT,
-        SECURE: process.env.MAILER_SECURE || true,
-        DOMAIN: "url",
-        ADMIN: process.env.ADMIN,
-        SUPPORT: process.env.SUPPORT,
-        DEFAULT_EMAIL_FROM: "my-template <no-reply@my-template.com>",
+        SECURE: process.env.MAILER_SECURE === 'true' ? false : false,
+        DEFAULT_FROM: process.env.DEFAULT_FROM
     },
     sentry: {
         DSN: process.env.SENTRY_DSN,

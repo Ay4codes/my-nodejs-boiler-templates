@@ -2,10 +2,9 @@ const { BCRYPT_SALT } = require("../../config");
 const {User} = require("../models/user.model")
 const ValidationSchema = require('../utils/validators.schema')
 const bcrypt = require('bcrypt');
-const tokenServices = require("./token.services");
-const config = require("../../config");
+const TokenServices = require("./token.services");
 
-class authServices {
+class AuthServices {
 
     async register (body) {
 
@@ -27,7 +26,7 @@ class authServices {
 
         const user = await new User(newUser).save()
 
-        const token = await tokenServices.generateAuthToken(user)
+        const token = await TokenServices.generateAuthToken(user)
 
         return {success: true, status: 201, message: `User registeration successful`, data: {token: token.data, user: user}}
 
@@ -50,7 +49,7 @@ class authServices {
     
         if (user.account_disabled) return { success: false, status: 403, message: 'Account disabled. If you believe this is a mistake, please contact our support team for assistance.', issue: '-account_disabled' };
     
-        const token = await tokenServices.generateAuthToken(user);
+        const token = await TokenServices.generateAuthToken(user);
     
         if (!user.email_verified) return { success: true, status: 200, message: 'Login successful', data: { token: token.data }, issue: '-email_not_verified' };
     
@@ -65,7 +64,7 @@ class authServices {
 
         if (error) return {success: false, status: 400, message: error.message}
 
-        const refreshToken = await tokenServices.refreshAuthToken(data.refresh_token)
+        const refreshToken = await TokenServices.refreshAuthToken(data.refresh_token)
 
         if (!refreshToken.success) return {success: false, status: refreshToken.status, message: refreshToken.message}
 
@@ -80,7 +79,7 @@ class authServices {
 
         if (error) return {success: false, status: 400, message: error.message}
 
-        const revokeToken = await tokenServices.revokeRefreshToken(data.refresh_token)
+        const revokeToken = await TokenServices.revokeRefreshToken(data.refresh_token)
 
         if (!revokeToken.success) return {success: revokeToken.success, status: revokeToken.status, message: revokeToken.message}
 
@@ -89,7 +88,7 @@ class authServices {
     }
 
 
-    async verifyEmail (body) {
+    async requestemailverification (body) {
 
         const d = '' // WIP
 
@@ -97,4 +96,4 @@ class authServices {
 
 }
 
-module.exports = new authServices
+module.exports = new AuthServices

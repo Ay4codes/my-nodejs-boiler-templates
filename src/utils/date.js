@@ -1,6 +1,6 @@
 const { DateTime } = require('luxon');
 
-class customDate {
+class CustomDate {
     now () {
         const date = Date.now()
         return date
@@ -42,4 +42,4 @@ class customDate {
     }
 }
 
-module.exports = new customDate
+module.exports = new CustomDate

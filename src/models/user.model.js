@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const customDate = require('../utils/date')
+const CustomDate = require('../utils/date')
 
 const userSchema = mongoose.Schema({
     first_name: {
@@ -48,7 +48,7 @@ const userSchema = mongoose.Schema({
     last_seen: {
         type: Date,
         required: true,
-        default: customDate.now
+        default: CustomDate.now
     },
     password: {
         type: String,
@@ -56,12 +56,12 @@ const userSchema = mongoose.Schema({
         select: false
     },
     date: {
-        day: {type: String, default: customDate.day},
-        time: {type: String, default: customDate.time},
-        month: {type: String, default: customDate.month},
-        year: {type: String, default: customDate.year},
-        custom_date: {type: String, default: customDate.date},
-        date: {type: Date, default: customDate.now}
+        day: {type: String, default: CustomDate.day},
+        time: {type: String, default: CustomDate.time},
+        month: {type: String, default: CustomDate.month},
+        year: {type: String, default: CustomDate.year},
+        custom_date: {type: String, default: CustomDate.date},
+        date: {type: Date, default: CustomDate.now}
     },
 }, {timestamps: true})
 

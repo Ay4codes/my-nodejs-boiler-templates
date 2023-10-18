@@ -5,6 +5,8 @@ const logger = require('./src/logger');
 const { whiteListIpAddress } = require('./src/middleware/ips.middleware');
 const { errorMiddlewareConfig } = require('./src/middleware/error.middleware');
 const config = require('./config');
+const { connectMongoDB } = require('./connections/mongo');
+const Mailer = require('./connections/mailer');
 const numCPUs = require('os').cpus().length;
 
 
@@ -26,9 +28,11 @@ if (cluster.isMaster) {
   // Error Middleware
   errorMiddlewareConfig(app)
 
-  app.listen(3000, () => {
+  app.listen(3000, async () => {
     // Initialize mongoDB connection
-    require('./src/database/mongo')
+    await connectMongoDB()
+
+    await Mailer.verifyConnection()
       
     logger.info(`Server Started Successfully`);
   })

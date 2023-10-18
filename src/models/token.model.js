@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 const config = require("../../config");
-const customDate = require('../utils/date')
+const CustomDate = require('../utils/date')
 
 const tokenSchema = mongoose.Schema({
     code: {
@@ -29,7 +29,7 @@ const tokenSchema = mongoose.Schema({
     expiredAt: {
         type: Date,
         required: true,
-        default: customDate.now,
+        default: CustomDate.now,
         expires: config.auth.jwt.TOKEN_EXPIRES_IN
     }
 }, {timestamps: true})

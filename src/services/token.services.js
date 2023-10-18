@@ -3,10 +3,10 @@ const bcrypt = require('bcrypt');
 const config = require('../../config');
 const { Token } = require('../models/token.model');
 var jwt = require('jsonwebtoken');
-const customDate = require('../utils/date');
+const CustomDate = require('../utils/date');
 const { User } = require('../models/user.model');
 
-class tokenServices {
+class TokenServices {
 
     async generateAuthToken(user) {
 
@@ -14,7 +14,7 @@ class tokenServices {
 
         const hashedRefreshToken = bcrypt.hashSync(refreshToken, config.BCRYPT_SALT);
 
-        await new Token({user: user._id, token: hashedRefreshToken, type: config.auth.tokens_types.refresh, expiredAt: customDate.now() + config.auth.jwt.REFRESH_TOKEN_EXPIRES_IN}).save()
+        await new Token({user: user._id, token: hashedRefreshToken, type: config.auth.tokens_types.refresh, expiredAt: CustomDate.now() + config.auth.jwt.REFRESH_TOKEN_EXPIRES_IN}).save()
 
         const accessTokenJwt = jwt.sign({ user_id: user._id, role: user.role, email: user.email }, config.auth.jwt.JWT_SECRET, { expiresIn: config.auth.jwt.TOKEN_EXPIRES_IN / 1000});
 
@@ -103,7 +103,7 @@ class tokenServices {
 
         const hashedToken = bcrypt.hashSync(token, config.BCRYPT_SALT)
 
-        await new Token({code: hashedCode, token: hashedToken, user: user._id, type: token_type, expiredAt: customDate.now() + config.auth.jwt.REFRESH_TOKEN_EXPIRES_IN}).save()
+        await new Token({code: hashedCode, token: hashedToken, user: user._id, type: token_type, expiredAt: CustomDate.now() + config.auth.jwt.REFRESH_TOKEN_EXPIRES_IN}).save()
 
         return {success: true, status: 200, data: {code: code, token: token}}
 
@@ -152,4 +152,4 @@ class tokenServices {
     
 }
 
-module.exports = new tokenServices
+module.exports = new TokenServices
