@@ -67,6 +67,8 @@ class AuthServices {
         }
     
         if (!user.identity_verified) return { success: true, status: 200, message: 'Login successful', data: { token: token.data }, issue: '-identity_not_verified' };
+
+        return { success: true, status: 200, message: 'Login successful', data: { token: token.data }};
         
     }
 
@@ -109,7 +111,7 @@ class AuthServices {
 
         const user = await User.findOne({_id: data.user_id})
 
-        if (!user) return { success: false, status: 404, message: 'User does not exist', issue: '-user_not_found' };
+        if (!user) return { success: false, status: 404, message: 'User does not exist' };
 
         if (user.email_verified) return {success: false, status: 400, message: 'Email is already verified'}
 
@@ -120,6 +122,48 @@ class AuthServices {
         data.with_identity ? await User.updateOne({_id: data.user_id}, {$set: {email_verified: true, identity_verified: true}}) : await User.updateOne({_id: data.user_id}, {$set: {email_verified: true}})
         
         return {success: true, status: 200, message: verifyToken.message}
+
+    }
+
+
+    async requestPasswordReset (body) {
+
+        const {error, value: data} = ValidationSchema.requestPasswordReset.validate(body)
+
+        if (error) return {success: false, status: 400, message: error.message}
+
+        const user = await User.findOne({email: data.email})
+
+        if (!user) return { success: false, status: 404, message: 'User does not exist'};
+
+        const emailVerification = await TokenServices.genereteToken(user, auth.tokens_types.password_reset)
+        
+        await mailerServices.sendPasswordResetRequestEmail(user, emailVerification.data)
+
+        return {success: true, status: 200, message: 'Password reset request successful'}
+
+    }
+
+
+    async resetPassword (body) {
+
+        const {error, value: data} = ValidationSchema.resetPassword.validate(body)
+
+        if (error) return {success: false, status: 400, message: error.message}
+
+        const user = await User.findOne({email: data.email})
+
+        if (!user) return { success: false, status: 404, message: 'User does not exist' };
+
+        const verifyToken = await TokenServices.verifyToken(user, auth.tokens_types.password_reset, data.code, data.token)
+
+        if (!verifyToken.success) return {success: false, status: verifyToken.status, message: verifyToken.message}
+        
+        const hashedPassword = bcrypt.hashSync(data.new_password, BCRYPT_SALT)
+
+        await User.updateOne({_id: user._id}, {$set: {password: hashedPassword}})
+
+        return {success: true, status: 200, message: "Password reset successful"}
 
     }
 

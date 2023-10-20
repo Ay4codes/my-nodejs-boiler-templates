@@ -25,7 +25,17 @@ class AuthCtrl {
 
     async verifyEmail(req, res) {
         const verifyEmail = await authServices.verifyEmail(req.body)
-        res.status(verifyEmail.status).json(response(verifyEmail.success, verifyEmail.message, undefined, verifyEmail.issue))
+        res.status(verifyEmail.status).json(response(verifyEmail.success, verifyEmail.message))
+    }
+
+    async requestPasswordReset(req, res) {
+        const requestPasswordReset = await authServices.requestPasswordReset(req.body)
+        res.status(requestPasswordReset.status).json(response(requestPasswordReset.success, requestPasswordReset.message))
+    }
+
+    async resetPassword(req, res) {
+        const resetPassword = await authServices.resetPassword(req.body)
+        res.status(resetPassword.status).json(response(resetPassword.success, resetPassword.message))
     }
 
 }

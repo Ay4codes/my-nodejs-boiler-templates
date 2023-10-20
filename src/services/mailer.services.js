@@ -18,6 +18,7 @@ class MailServices {
         
     }
 
+
     async sendEmailVerificationEmail (user, verification) {
 
         return mailer.sendMail({
@@ -27,6 +28,21 @@ class MailServices {
             subject: `Verify your email address`,
 
             html:  MailsTemplates.emailVerificationEmail(user.first_name, verification.code, domain.LANDING_URL + `/verify-email?code=${verification.code}&token=${verification.token}`),
+            
+        })
+        
+    }
+
+
+    async sendPasswordResetRequestEmail (user, verification) {
+
+        return mailer.sendMail({
+
+            to: user.email,
+
+            subject: `Password Reset Request`,
+
+            html:  MailsTemplates.passwordResetRequestEmail(user.first_name, domain.LANDING_URL + `/verify-email?code=${verification.code}&token=${verification.token}`),
             
         })
         

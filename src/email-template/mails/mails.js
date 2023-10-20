@@ -1,4 +1,4 @@
-const { APP_NAME } = require("../../../config")
+const { APP_NAME, mailer } = require("../../../config")
 const { Button } = require("../components/button")
 const {colors} = require("../constants")
 const Layout = require("../layout/default-layout")
@@ -35,6 +35,20 @@ class MailTemplates {
             `)
         )
     }
+
+
+    passwordResetRequestEmail = (firstname, verificationLink) => {
+        return Layout(`
+          <section>
+            <h3>Hi ${firstname} 👋</h3>
+            <p>We received a request to reset your password. Click the button below to get started.</p>
+            ${Button('Reset Your Password', verificationLink)}
+            <p>If the button above doesn't work, you can also click or copy the following link to your browser:</p>
+            <a style="display: block; color: ${colors.primary};" href="${verificationLink}">${verificationLink}</a>
+            <p> If you did not request for a password reset, please ignore this message. For further assistance contact us at <a href="mailto:support@fuelpayafrica.com" style="color: ${colors.primary};">${mailer.SUPPORT}</a>
+          </section>
+        `);
+    };
 
 }
 

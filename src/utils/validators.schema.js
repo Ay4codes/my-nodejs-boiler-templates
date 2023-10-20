@@ -47,6 +47,24 @@ class ValidationSchema {
 
         })
 
+        this.requestPasswordReset = Joi.object({
+
+            email: Joi.string().email().required().label('email')
+
+        })
+
+        this.resetPassword = Joi.object({
+
+            email: Joi.string().email().required().label('email'),
+
+            code: Joi.string().required().min(6).max(6).label('code'),
+
+            token: Joi.string().required().label('token'),
+
+            new_password: Joi.string().required().min(8).label('new_password').regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/).message('Password must contain at least one lowercase letter, one uppercase letter, and one digit')
+
+        })
+
     }
 }
 

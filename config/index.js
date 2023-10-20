@@ -40,7 +40,8 @@ const config = {
         SECURE: process.env.MAILER_SECURE === 'true' ? false : false,
         USER: process.env.MAILER_USER,
         PASSWORD: process.env.MAILER_PASSWORD,
-        DEFAULT_FROM: `${"The Template Team"} <${process.env.MAILER_USER}>`
+        DEFAULT_FROM: `${"The Template Team"} <${process.env.MAILER_USER}>`,
+        SUPPORT: 'support@my-template.com'
     },
     sentry: {
         DSN: process.env.SENTRY_DSN,
