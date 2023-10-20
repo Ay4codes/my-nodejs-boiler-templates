@@ -23,6 +23,11 @@ class AuthCtrl {
         res.status(refreshToken.status).json(response(refreshToken.success, refreshToken.message, refreshToken.data))
     }
 
+    async verifyEmail(req, res) {
+        const verifyEmail = await authServices.verifyEmail(req.body)
+        res.status(verifyEmail.status).json(response(verifyEmail.success, verifyEmail.message, undefined, verifyEmail.issue))
+    }
+
 }
 
 module.exports = new AuthCtrl

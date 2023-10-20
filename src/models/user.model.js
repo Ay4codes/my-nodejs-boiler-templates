@@ -34,11 +34,6 @@ const userSchema = mongoose.Schema({
         required: true,
         default: false,
     },
-    is_new_user: {
-        type: Boolean,
-        required: true,
-        default: true,
-    },
     country: {
         type: String,
         required: true,

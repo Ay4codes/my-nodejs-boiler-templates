@@ -56,7 +56,15 @@ class AuthServices {
     
         const token = await TokenServices.generateAuthToken(user);
     
-        if (!user.email_verified) return { success: true, status: 200, message: 'Login successful', data: { token: token.data }, issue: '-email_not_verified' };
+        if (!user.email_verified) {
+
+            const emailVerification = await TokenServices.genereteToken(user, auth.tokens_types.email_verification)
+
+            await mailerServices.sendEmailVerificationEmail(user, emailVerification.data)
+
+            return { success: true, status: 200, message: 'Login successful', data: { token: token.data }, issue: '-email_not_verified' };
+        
+        }
     
         if (!user.identity_verified) return { success: true, status: 200, message: 'Login successful', data: { token: token.data }, issue: '-identity_not_verified' };
         
@@ -93,9 +101,25 @@ class AuthServices {
     }
 
 
-    async requestEmailVerification (body) {
+    async verifyEmail (body) {
 
-        const d = '' // WIP
+        const {error, value: data} = ValidationSchema.verifyEmail.validate(body)
+
+        if (error) return {success: false, status: 400, message: error.message}
+
+        const user = await User.findOne({_id: data.user_id})
+
+        if (!user) return { success: false, status: 404, message: 'User does not exist', issue: '-user_not_found' };
+
+        if (user.email_verified) return {success: false, status: 400, message: 'Email is already verified'}
+
+        const verifyToken = await TokenServices.verifyToken(user, auth.tokens_types.email_verification, data.code, data?.token)
+
+        if (!verifyToken.success) return {success: false, status: verifyToken.status, message: verifyToken.message}
+
+        data.with_identity ? await User.updateOne({_id: data.user_id}, {$set: {email_verified: true, identity_verified: true}}) : await User.updateOne({_id: data.user_id}, {$set: {email_verified: true}})
+        
+        return {success: true, status: 200, message: verifyToken.message}
 
     }
 

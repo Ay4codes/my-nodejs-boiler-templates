@@ -10,4 +10,6 @@ router.get('/logout', AuthCtrl.logoutUser)
 
 router.get('/refresh-tokens', AuthCtrl.refreshToken)
 
+router.post('/verify-email', AuthCtrl.verifyEmail)
+
 module.exports = router;

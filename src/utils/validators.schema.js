@@ -1,4 +1,5 @@
 const Joi = require('joi');
+const { auth } = require('../../config');
 
 class ValidationSchema {
 
@@ -31,6 +32,18 @@ class ValidationSchema {
         this.logout = Joi.object({
 
             refresh_token: Joi.string().required().label('refresh token')
+
+        })
+
+        this.verifyEmail = Joi.object({
+
+            user_id: Joi.string().required().label('User ID').regex(/^[0-9a-fA-F]{24}$/).message("User ID is invalid"),
+
+            code: Joi.string().required().min(6).max(6).label('Code'),
+
+            token: Joi.string().label('Token'),
+
+            with_identity: Joi.boolean().label('with_identity')
 
         })
 

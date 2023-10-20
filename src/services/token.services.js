@@ -103,7 +103,7 @@ class TokenServices {
 
         const hashedToken = bcrypt.hashSync(token, config.BCRYPT_SALT)
 
-        await new Token({code: hashedCode, token: hashedToken, user: user._id, type: token_type, expiredAt: CustomDate.now() + config.auth.jwt.REFRESH_TOKEN_EXPIRES_IN}).save()
+        await new Token({code: hashedCode, token: hashedToken, user: user._id, type: token_type, expiredAt: CustomDate.now() + config.auth.jwt.TOKEN_EXPIRES_IN}).save()
 
         return {success: true, status: 200, data: {code: code, token: token}}
 
@@ -116,9 +116,9 @@ class TokenServices {
 
         if (!findToken) return {success: false, status: 403, message: "Token is exipred"}
 
-        const verifyCode = bcrypt.compare(code, findToken.code)
+        const verifyCode = await bcrypt.compare(code, findToken.code)
 
-        const verifyToken = bcrypt.compare(token, findToken.token)
+        const verifyToken = await bcrypt.compare(token || '', findToken.token)
 
         if (!token) {
 
@@ -126,15 +126,15 @@ class TokenServices {
 
             await Token.deleteOne({user: user._id, type: token_type})
 
-            return {success: true, status: 200, message: 'Token Verified Successful'}
+            return {success: true, status: 200, message: 'Code Verified Successful'}
 
         }
 
-        if (!verifyToken || !verifyCode) return {success: false, status: 401, message: 'Code or Token is Invalid'}
+        if (!verifyToken || !verifyCode) return {success: false, status: 401, message: 'Url is Invalid'}
 
         await Token.deleteOne({user: user._id, type: token_type})
 
-        return {success: true, status: 200, message: 'Token Verified Successful'}
+        return {success: true, status: 200, message: 'Url Verified Successful'}
 
     }
 
