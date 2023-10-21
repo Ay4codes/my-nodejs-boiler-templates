@@ -29,11 +29,11 @@ class TokenServices {
 
         const refreshTokenValue = await this.decodeToken(refresh_token_jwt)
 
-        if (!refreshTokenValue.status) return {success: false, status: 403, message: 'Refresh token is expired'}
+        if (!refreshTokenValue.status) return {success: false, status: 401, message: 'Refresh token is expired', issue: '-token_expired'}
 
         const findRefreshToken = await Token.find({user: refreshTokenValue.user.user_id, type: config.auth.tokens_types.refresh})
 
-        if (findRefreshToken.length === 0) return {success: false, status: 403, message: 'Refresh token is expired'}
+        if (findRefreshToken.length === 0) return {success: false, status: 401, message: 'Refresh token is expired', issue: '-token_expired'}
 
         for (let i = 0; i < findRefreshToken.length; i++) {
 
@@ -53,7 +53,7 @@ class TokenServices {
 
         }
 
-        return {success: false, status: 403, message: 'Refresh token is expired'}
+        return {success: false, status: 401, message: 'Refresh token is expired', issue: '-token_expired'}
 
     }
 
@@ -62,11 +62,11 @@ class TokenServices {
 
         const refreshTokenValue = await this.decodeToken(refresh_token_jwt)
 
-        if (!refreshTokenValue.status) return {success: false, status: 403, message: 'Refresh token is expired'}
+        if (!refreshTokenValue.status) return {success: false, status: 401, message: 'Refresh token is expired', issue: '-token_expired'}
 
         const findRefreshToken = await Token.find({user: refreshTokenValue.user.user_id, type: config.auth.tokens_types.refresh})
 
-        if (findRefreshToken.length === 0) return {success: false, status: 403, message: 'Refresh token is expired'}
+        if (findRefreshToken.length === 0) return {success: false, status: 401, message: 'Refresh token is expired', issue: '-token_expired'}
 
         for (let i = 0; i < findRefreshToken.length; i++) {
 
@@ -84,7 +84,7 @@ class TokenServices {
             
         }
 
-        return {success: false, status: 401, message: 'Refresh token is invalid'}
+        return {success: false, status: 401, message: 'Refresh token is expired', issue: '-token_expired'}
 
     }
 
@@ -114,7 +114,7 @@ class TokenServices {
 
         const findToken = await Token.findOne({user: user._id, type: token_type})
 
-        if (!findToken) return {success: false, status: 403, message: "Token is exipred"}
+        if (!findToken) return {success: false, status: 401, message: "Code or Token is exipred", issue: '-token_expired'}
 
         const verifyCode = await bcrypt.compare(code, findToken.code)
 
@@ -122,7 +122,7 @@ class TokenServices {
 
         if (!token) {
 
-            if (!verifyCode) return {success: false, status: 401, message: 'Code is Invalid'}
+            if (!verifyCode) return {success: false, status: 401, message: 'Code is Invalid', issue: '-code_invalid'}
 
             await Token.deleteOne({user: user._id, type: token_type})
 
@@ -130,7 +130,7 @@ class TokenServices {
 
         }
 
-        if (!verifyToken || !verifyCode) return {success: false, status: 401, message: 'Url is Invalid'}
+        if (!verifyToken || !verifyCode) return {success: false, status: 401, message: 'Url is Invalid', issue: '-url_expired'}
 
         await Token.deleteOne({user: user._id, type: token_type})
 

@@ -42,7 +42,7 @@ class AuthServices {
 
         const { error, value: data } = ValidationSchema.login.validate(body);
     
-        if (error) return { success: false, status: 400, message: error.message, issue: '-validation_error' };
+        if (error) return { success: false, status: 400, message: error.message};
     
         const user = await User.findOne({ email: data.email }).select('+password');
     
@@ -52,7 +52,7 @@ class AuthServices {
     
         if (!verifyPassword) return { success: false, status: 401, message: 'Invalid credentials', issue: '-invalid_credentials' };
     
-        if (user.account_disabled) return { success: false, status: 403, message: 'Account disabled. If you believe this is a mistake, please contact our support team for assistance.', issue: '-account_disabled' };
+        if (user.account_disabled) return { success: false, status: 401, message: 'Account disabled. If you believe this is a mistake, please contact our support team for assistance.', issue: '-account_disabled' };
     
         const token = await TokenServices.generateAuthToken(user);
     
@@ -83,7 +83,7 @@ class AuthServices {
 
         if (!refreshToken.success) return {success: false, status: refreshToken.status, message: refreshToken.message}
 
-        return {success: refreshToken.success, status: refreshToken.status, message: refreshToken.message, data: refreshToken.data}
+        return {success: refreshToken.success, status: refreshToken.status, message: refreshToken.message, data: refreshToken.data, issue: refreshToken.issue}
 
     }
 
@@ -96,7 +96,7 @@ class AuthServices {
 
         const revokeToken = await TokenServices.revokeRefreshToken(data.refresh_token)
 
-        if (!revokeToken.success) return {success: revokeToken.success, status: revokeToken.status, message: revokeToken.message}
+        if (!revokeToken.success) return {success: revokeToken.success, status: revokeToken.status, message: revokeToken.message, issue: revokeToken.issue}
 
         return {success: true, status: 200, message: 'Logout successful'}
 
@@ -117,7 +117,7 @@ class AuthServices {
 
         const verifyToken = await TokenServices.verifyToken(user, auth.tokens_types.email_verification, data.code, data?.token)
 
-        if (!verifyToken.success) return {success: false, status: verifyToken.status, message: verifyToken.message}
+        if (!verifyToken.success) return {success: false, status: verifyToken.status, message: verifyToken.message, issue: verifyToken.issue}
 
         data.with_identity ? await User.updateOne({_id: data.user_id}, {$set: {email_verified: true, identity_verified: true}}) : await User.updateOne({_id: data.user_id}, {$set: {email_verified: true}})
         

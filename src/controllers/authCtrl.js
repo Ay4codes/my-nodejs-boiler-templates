@@ -15,27 +15,27 @@ class AuthCtrl {
 
     async logoutUser(req, res) {
         const logout = await authServices.logout({refresh_token: req.headers.refresh_token})
-        res.status(logout.status).json(response(logout.success, logout.message, logout.data))
+        res.status(logout.status).json(response(logout.success, logout.message, logout.data, logout.issue))
     }
 
     async refreshToken(req, res) {
         const refreshToken = await authServices.refreshToken({refresh_token: req.headers.refresh_token})
-        res.status(refreshToken.status).json(response(refreshToken.success, refreshToken.message, refreshToken.data))
+        res.status(refreshToken.status).json(response(refreshToken.success, refreshToken.message, refreshToken.data, refreshToken.issue))
     }
 
     async verifyEmail(req, res) {
         const verifyEmail = await authServices.verifyEmail(req.body)
-        res.status(verifyEmail.status).json(response(verifyEmail.success, verifyEmail.message))
+        res.status(verifyEmail.status).json(response(verifyEmail.success, verifyEmail.message, verifyEmail.data, verifyEmail.issue))
     }
 
     async requestPasswordReset(req, res) {
         const requestPasswordReset = await authServices.requestPasswordReset(req.body)
-        res.status(requestPasswordReset.status).json(response(requestPasswordReset.success, requestPasswordReset.message))
+        res.status(requestPasswordReset.status).json(response(requestPasswordReset.success, requestPasswordReset.message, requestPasswordReset.data, requestPasswordReset.issue))
     }
 
     async resetPassword(req, res) {
         const resetPassword = await authServices.resetPassword(req.body)
-        res.status(resetPassword.status).json(response(resetPassword.success, resetPassword.message))
+        res.status(resetPassword.status).json(response(resetPassword.success, resetPassword.message, resetPassword.data, resetPassword.issue))
     }
 
 }
