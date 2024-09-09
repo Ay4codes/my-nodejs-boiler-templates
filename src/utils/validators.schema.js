@@ -1,7 +1,5 @@
-const Joi = require('joi');
-const { auth } = require('../../config');
-const mongoose = require('mongoose');
-
+import Joi from 'joi'
+import mongoose from 'mongoose'
 
 class ValidationSchema {
 
@@ -112,4 +110,4 @@ class ValidationSchema {
     }
 }
 
-module.exports = new ValidationSchema
+export default new ValidationSchema

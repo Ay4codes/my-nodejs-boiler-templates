@@ -1,5 +1,5 @@
-const authServices = require("../services/auth.services");
-const response = require("../utils/response");
+import authServices from "../services/auth.services.js"
+import response from "../utils/response.js"
 
 class AuthCtrl {
 
@@ -40,4 +40,4 @@ class AuthCtrl {
 
 }
 
-module.exports = new AuthCtrl
+export default new AuthCtrl

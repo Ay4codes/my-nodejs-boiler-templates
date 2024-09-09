@@ -7,4 +7,4 @@ const response = (status, message, data, issue) => {
     }
 }
 
-module.exports = (response)
+export default response

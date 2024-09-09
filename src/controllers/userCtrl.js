@@ -1,5 +1,5 @@
-const userServices = require("../services/user.services");
-const response = require("../utils/response");
+import userServices from "../services/user.services.js"
+import response from "../utils/response.js"
 
 class UserCtrl {
 
@@ -20,4 +20,4 @@ class UserCtrl {
 
 }
 
-module.exports = new UserCtrl
+export default new UserCtrl

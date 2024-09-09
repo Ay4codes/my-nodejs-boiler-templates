@@ -1,25 +1,16 @@
-const Sentry = require('@sentry/node')
-const response = require("../utils/response");
-const { customResponse } = require("../utils/custom-error");
+import logger from "../logger/index.js";
+import response from "../utils/response.js";
 
-const errorMiddlewareConfig = (app) => {
-    // Sentry error handler
-    app.use(Sentry.Handlers.errorHandler());
+const configureErrorMiddleware = (err, req, res, next) => {
 
-    app.use((err, req, res, next) => {
+    logger.error({message: err.message, stack: err.stack});
 
-        if (err instanceof SyntaxError && 'body' in err) return res.status(400).json(customResponse(false, 'Error', 'Invalid JSON'));
-        
-        return res.status(500).json(customResponse(false, 'Error', err.message))
+    const statusCode = err.status || 500;
 
-    })
+    const errorMessage = err.message || 'Internal Server Error'
 
-    // Handle 404 requests
-    app.use("*", (req, res) => {
+    res.status(statusCode).json(response(false, errorMessage, undefined, '-error'));
 
-        res.status(404).json(response(false, 'Invalid request url'));
-
-    });
 }
-
-module.exports = {errorMiddlewareConfig}
+  
+export default configureErrorMiddleware

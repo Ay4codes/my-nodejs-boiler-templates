@@ -1,9 +1,9 @@
-const { BCRYPT_SALT, auth } = require("../../config");
-const {User} = require("../models/user.model")
-const ValidationSchema = require('../utils/validators.schema')
-const bcrypt = require('bcrypt');
-const TokenServices = require("./token.services");
-const mailerServices = require("./mailer.services");
+import bcrypt from 'bcrypt'
+import { CONFIG } from '../../config/index.js';
+import User from '../models/user.model.js';
+import ValidationSchema from '../utils/validators.schema.js';
+import TokenServices from './token.services.js';
+import mailerServices from './mailer.services.js'
 
 class AuthServices {
 
@@ -15,7 +15,7 @@ class AuthServices {
 
         const query = [{email: data.email}]
 
-        const hashedPassword = bcrypt.hashSync(data.password, BCRYPT_SALT)
+        const hashedPassword = bcrypt.hashSync(data.password, CONFIG.AUTH.BCRYPT_SALT)
 
         const newUser = {first_name: data.firstname, last_name: data.lastname, email: data.email, password: hashedPassword}
 
@@ -29,7 +29,7 @@ class AuthServices {
 
         const token = await TokenServices.generateAuthToken(user)
 
-        const emailVerification = await TokenServices.genereteToken(user, auth.tokens_types.email_verification)
+        const emailVerification = await TokenServices.genereteToken(user, CONFIG.AUTH.TOKEN_TYPES.email_verification)
 
         await mailerServices.sendWelcomeEmail(user, emailVerification.data)
 
@@ -58,7 +58,7 @@ class AuthServices {
     
         if (!user.email_verified) {
 
-            const emailVerification = await TokenServices.genereteToken(user, auth.tokens_types.email_verification)
+            const emailVerification = await TokenServices.genereteToken(user, CONFIG.AUTH.TOKEN_TYPES.email_verification)
 
             await mailerServices.sendEmailVerificationEmail(user, emailVerification.data)
 
@@ -115,7 +115,7 @@ class AuthServices {
 
         if (user.email_verified) return {success: false, status: 400, message: 'Email is already verified'}
 
-        const verifyToken = await TokenServices.verifyToken(user, auth.tokens_types.email_verification, data.code, data?.token)
+        const verifyToken = await TokenServices.verifyToken(user, CONFIG.AUTH.TOKEN_TYPES.email_verification, data.code, data?.token)
 
         if (!verifyToken.success) return {success: false, status: verifyToken.status, message: verifyToken.message, issue: verifyToken.issue}
 
@@ -136,7 +136,7 @@ class AuthServices {
 
         if (!user) return { success: false, status: 404, message: 'User does not exist'};
 
-        const emailVerification = await TokenServices.genereteToken(user, auth.tokens_types.password_reset)
+        const emailVerification = await TokenServices.genereteToken(user, CONFIG.AUTH.TOKEN_TYPES.password_reset)
         
         await mailerServices.sendPasswordResetRequestEmail(user, emailVerification.data)
 
@@ -155,11 +155,11 @@ class AuthServices {
 
         if (!user) return { success: false, status: 404, message: 'User does not exist' };
 
-        const verifyToken = await TokenServices.verifyToken(user, auth.tokens_types.password_reset, data.code, data.token)
+        const verifyToken = await TokenServices.verifyToken(user, CONFIG.AUTH.TOKEN_TYPES.password_reset, data.code, data.token)
 
         if (!verifyToken.success) return {success: false, status: verifyToken.status, message: verifyToken.message}
         
-        const hashedPassword = bcrypt.hashSync(data.new_password, BCRYPT_SALT)
+        const hashedPassword = bcrypt.hashSync(data.new_password, CONFIG.AUTH.BCRYPT_SALT)
 
         await User.updateOne({_id: user._id}, {$set: {password: hashedPassword}})
 
@@ -169,4 +169,4 @@ class AuthServices {
 
 }
 
-module.exports = new AuthServices
+export default new AuthServices

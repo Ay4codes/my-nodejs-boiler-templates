@@ -1,6 +1,6 @@
-const { domain, APP_NAME } = require("../../config")
-const mailer = require("../connections/mailer")
-const MailsTemplates = require('../email-template/mails/mails')
+import { CONFIG } from '../../config/index.js'
+import mailer from '../connections/mailer.js'
+import MailsTemplates from '../email-template/mails/mails.js'
 
 class MailServices {
 
@@ -10,9 +10,9 @@ class MailServices {
 
             to: user.email,
 
-            subject: `Welcome to ${APP_NAME}`,
+            subject: `Welcome to ${CONFIG.APP_NAME}`,
 
-            html:  MailsTemplates.welcomeUserEmail(user.first_name, verification.code, domain.LANDING_URL + `/verify-email?code=${verification.code}&token=${verification.token}`),
+            html:  MailsTemplates.welcomeUserEmail(user.first_name, verification.code, CONFIG.HOST.LANDING_BASE_URL + `/verify-email?code=${verification.code}&token=${verification.token}`),
             
         })
         
@@ -27,7 +27,7 @@ class MailServices {
 
             subject: `Verify your email address`,
 
-            html:  MailsTemplates.emailVerificationEmail(user.first_name, verification.code, domain.LANDING_URL + `/verify-email?code=${verification.code}&token=${verification.token}`),
+            html:  MailsTemplates.emailVerificationEmail(user.first_name, verification.code, CONFIG.HOST.LANDING_BASE_URL + `/verify-email?code=${verification.code}&token=${verification.token}`),
             
         })
         
@@ -42,7 +42,7 @@ class MailServices {
 
             subject: `Password Reset Request`,
 
-            html:  MailsTemplates.passwordResetRequestEmail(user.first_name, domain.LANDING_URL + `/verify-email?code=${verification.code}&token=${verification.token}`),
+            html:  MailsTemplates.passwordResetRequestEmail(user.first_name, CONFIG.HOST.LANDING_BASE_URL + `/verify-email?code=${verification.code}&token=${verification.token}`),
             
         })
         
@@ -50,4 +50,4 @@ class MailServices {
 
 }
 
-module.exports = new MailServices
+export default new MailServices

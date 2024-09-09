@@ -1,47 +1,21 @@
-const mongoose = require("mongoose");
-const config = require("../../config");
-const CustomDate = require('../utils/date')
+import mongoose from "mongoose";
+import { CONFIG } from "../../config/index.js";
+import CustomDate from '../utils/date.js'
+
+const tokenTypes = Object.values(CONFIG.AUTH.TOKEN_TYPES);
 
 const tokenSchema = mongoose.Schema({
-    code: {
-        type: String, 
-        required: false,
-        default: null,
-    },
-    token: {
-        type: String,
-        required: false,
-        default: null,
-    },
-    type: {
-        type: String,
-        required: true,
-        enum: [
-            config.auth.tokens_types.refresh,
-            config.auth.tokens_types.email_verification,
-            config.auth.tokens_types.password_reset
-        ]
-    },
-    user: {
-        type: mongoose.Schema.Types.ObjectId,
-        required: true,
-    },
-    expiredAt: {
-        type: Date,
-        required: true,
-        default: CustomDate.now,
-        expires: config.auth.jwt.TOKEN_EXPIRES_IN
-    }
+    
+    code: {type: String,  required: false, default: null},
+    
+    token: {type: String, required: false, default: null},
+    
+    type: {type: String,required: true, enum: tokenTypes},
+    
+    user: {type: mongoose.Schema.Types.ObjectId, required: true},
+    
+    expiredAt: {type: Date, required: true, default: CustomDate.now, expires: CONFIG.AUTH.TOKEN_EXPIRES_IN}
+
 }, {timestamps: true})
 
-// set mongoose options to have lean turned on by default | ref: https://itnext.io/performance-tips-for-mongodb-mongoose-190732a5d382
-mongoose.Query.prototype.setOptions = function () {
-    if (this.mongooseOptions().lean == null) {
-        this.mongooseOptions({ lean: true });
-    }
-    return this;
-};
-
-const Token = mongoose.model('token', tokenSchema)
-
-module.exports = {Token}
+export default mongoose.model('token', tokenSchema)

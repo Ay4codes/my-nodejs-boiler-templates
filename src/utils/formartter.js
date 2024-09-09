@@ -21,4 +21,4 @@ class Formartter {
     }
 }
 
-module.exports = new Formartter
+export default new Formartter

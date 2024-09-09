@@ -1,45 +1,49 @@
-const { DateTime } = require('luxon');
+import { DateTime } from "luxon";
 
 class CustomDate {
+
+    getTimeStamp() {
+
+        const now = DateTime.now();
+    
+        const unixTimestamp = Math.floor(now.toMillis() / 1000);
+    
+        return {date_unix: unixTimestamp}
+    
+    }
+
     now () {
+
         const date = Date.now()
+
         return date
+
     }
 
     day() {
-        const day = DateTime.local().setZone('Africa/Lagos').day.toString().padStart(2, '0');
-        return (day).toString();
-    };
 
-    yesterday() {
-        const yesterday = DateTime.local().setZone('Africa/Lagos').minus({ days: 1 }).day.toString().padStart(2, '0');
-        return yesterday;
+        const day = DateTime.local().setZone('Africa/Lagos').day.toString().padStart(2, '0');
+
+        return (day).toString();
+    
     };
 
     month() {
+
         const month = DateTime.local().setZone('Africa/Lagos').month.toString().padStart(2, '0');
+        
         return (month).toString();
+    
     };
 
     year() {
-        const year = DateTime.local().setZone('Africa/Lagos').year;
-        return (year).toString();
-    };
 
-    date() {
-        const day = DateTime.local().setZone('Africa/Lagos').day.toString().padStart(2, '0');
+        const year = DateTime.local().setZone('Africa/Lagos').year;
         
-        const month = DateTime.local().setZone('Africa/Lagos').month.toString().padStart(2, '0');
-
-        const year = DateTime.local().setZone('Africa/Lagos').year;
-
-        return (day + '-' + month + '-' + year).toString()
+        return (year).toString();
+    
     };
 
-    time() {
-        const time = DateTime.local().setZone('Africa/Lagos').toFormat('HH:mm');
-        return (time).toString();
-    }
 }
 
-module.exports = new CustomDate
+export default new CustomDate

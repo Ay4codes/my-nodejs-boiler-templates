@@ -1,7 +1,7 @@
-const nodemailer = require('nodemailer');
-const { mailer } = require('../../config');
-const config = require('../../config');
-const logger = require("../logger");
+import nodemailer from 'nodemailer'
+import logger from '../logger/index.js'
+import { CONFIG } from '../../config/index.js'
+const mailer = CONFIG.MAILER
 
 class Mailer {
 
@@ -9,20 +9,20 @@ class Mailer {
 
         if (!Mailer.instance) {
 
-            if (!mailer.HOST) return logger.error('SMTP-HOST required. --not Found')
+            if (!mailer.SMTP_HOST) return logger.error('SMTP-HOST required. --not Found')
 
-            if (!mailer.PORT) return logger.error('SMTP-PORT required. --not Found')
+            if (!mailer.SMTP_PORT) return logger.error('SMTP-PORT required. --not Found')
 
-            if (!mailer.DEFAULT_FROM) return logger.error('SMTP-USER required. --not Found')
+            if (!CONFIG.DEFAULT_EMAIL_FROM) return logger.error('SMTP-USER required. --not Found')
 
-            if (!mailer.PASSWORD) return logger.error('SMTP-PASSWORD required. --not Found')
+            if (!mailer.SMTP_PASSWORD) return logger.error('SMTP-PASSWORD required. --not Found')
 
 
             this.transporter = nodemailer.createTransport({
 
-                host: mailer.HOST,
+                host: mailer.SMTP_HOST,
 
-                port: mailer.PORT,
+                port: mailer.SMTP_PORT,
                 
                 secure: mailer.SECURE,
                 
@@ -32,6 +32,14 @@ class Mailer {
 
                     pass: mailer.PASSWORD,
                 
+                },
+
+                tls: {
+
+                    rejectUnauthorized: mailer.REJECT_UNAUTH,
+
+                    ciphers: 'SSLv3'
+                    
                 }
 
             });
@@ -49,7 +57,7 @@ class Mailer {
 
         this.transporter.verify().then(() => {
 
-            logger.info(`Connected to mailer server ${mailer.HOST}:${mailer.PORT}`);
+            logger.info(`Connected to mailer server ${mailer.SMTP_HOST}:${mailer.SMTP_PORT}`);
 
         })
 
@@ -58,7 +66,7 @@ class Mailer {
 
     async sendMail (mailOptions) {
 
-        mailOptions = {...mailOptions, from: mailOptions.from || mailer.DEFAULT_FROM}
+        mailOptions = {...mailOptions, from: mailOptions.from || mailer.DEFAULT_EMAIL_FROM}
 
         await this.transporter.sendMail(mailOptions).then((info) => {
 
@@ -70,4 +78,4 @@ class Mailer {
 
 }
 
-module.exports = new Mailer
+export default new Mailer

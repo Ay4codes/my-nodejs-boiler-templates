@@ -1,7 +1,6 @@
-const { BCRYPT_SALT } = require("../../config");
-const { User } = require("../models/user.model")
-const ValidationSchema = require("../utils/validators.schema")
-const bcrypt = require('bcrypt');
+import User from "../models/user.model.js";
+import ValidationSchema from "../utils/validators.schema.js";
+import bcrypt from 'bcrypt'
 
 class UserServices {
 
@@ -18,7 +17,7 @@ class UserServices {
 
         if (error) return {success: false, status: 400, message: error.message}
 
-        await User.updateOne({_id: user._id}, {$set: {first_name: data.firstname, last_name: data.lastname}})
+        await userModel.updateOne({_id: user._id}, {$set: {first_name: data.firstname, last_name: data.lastname}})
 
         const findUser = await User.findOne({_id: user._id})
 
@@ -49,4 +48,4 @@ class UserServices {
     
 }
 
-module.exports = new UserServices
+export default new UserServices

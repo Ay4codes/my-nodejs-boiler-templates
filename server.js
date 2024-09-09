@@ -1,41 +1,27 @@
-const express = require('express')
+import express from 'express'
+import logger from './src/logger/index.js';
+import MailerInstance from './src/connections/mailer.js';
+import configurePreRouteMiddleware from './src/middleware/pre.route.middleware.js';
+import routes from './src/routes/index.js'
+import { DEPLOYMENT_ENV } from './config/index.js';
+import connectMongoDB from './src/connections/mongo.js';
+
 const app = express()
-const cluster = require('cluster');
-const logger = require('./src/logger');
-const { whiteListIpAddress } = require('./src/middleware/ips.middleware');
-const { errorMiddlewareConfig } = require('./src/middleware/error.middleware');
-const config = require('./config');
-const { connectMongoDB } = require('./src/connections/mongo');
-const Mailer = require('./src/connections/mailer');
-const numCPUs = require('os').cpus().length;
 
+const PORT = process.env.PORT || 4000;
 
-if (cluster.isMaster) {
-  // Fork workers
-  for (let i = 0; i < numCPUs; i++) cluster.fork();
+configurePreRouteMiddleware(app)
+
+app.use(routes)
+
+app.listen(PORT, async () => {
   
-  cluster.on('exit', (worker, code, signal) => {logger.info(`Worker ${worker.process.pid} died`)});
-} else {
-  // Pre Route MiddleWares
-  require('./src/middleware/pre.route.middleware')(app)
+  await connectMongoDB()
 
-  // Whitelisted Ip Address --->> Static Outbound & Admin
-  // app.use(whiteListIpAddress);
-  
-  // Routes
-  app.use(require('./src/routes'))
+  // await MailerInstance.verifyConnection()
 
-  // Error Middleware
-  errorMiddlewareConfig(app)
+  logger.info(`:::> Server listening on port ${PORT} @ http://localhost:${PORT} in ${DEPLOYMENT_ENV} mode <:::`);
 
-  app.listen(3000, async () => {
-    // Initialize mongoDB connection
-    await connectMongoDB()
+})
 
-    await Mailer.verifyConnection()
-      
-    logger.info(`Server Started Successfully`);
-  })
-  
-  app.on('error', (err) => {logger.warn(`Server On Error`)})
-}
+export default app

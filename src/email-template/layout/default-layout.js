@@ -1,6 +1,8 @@
-const config = require('../../../config');
-const CustomDate = require('../../utils/date');
-const {colors} = require('../constants');
+import { CONFIG } from '../../../config/index.js';
+import constants from '../constants/index.js';
+import CustomDate from '../../utils/date.js'
+const colors = constants.colors
+
 
 const Layout = (children) => {
     return (`
@@ -43,7 +45,7 @@ const Layout = (children) => {
                         <br />
                         <br />
                         <hr />
-                        <p style="line-height: 1rem; font-size: 14px;">© ${config.APP_NAME} ${CustomDate.year()}</p>
+                        <p style="line-height: 1rem; font-size: 14px;">© ${CONFIG.APP_NAME} ${CustomDate.year()}</p>
                         <p style="line-height: 1rem; font-size: 14px;">Easy Peasy</p>
                     </div>
                 </div>
@@ -52,4 +54,4 @@ const Layout = (children) => {
     `)
 };
 
-module.exports = Layout
+export default Layout

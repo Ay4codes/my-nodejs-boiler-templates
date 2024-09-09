@@ -1,65 +1,53 @@
-const express = require('express');
-const path = require('path');
-const bodyParser = require('body-parser');
-const cors = require('cors');
-const cookieParser = require('cookie-parser');
-const logger = require('../logger');
-const helmet = require('helmet');
-const trimRequestBody = require('../utils/trim-object-strings');
-const Sentry = require('@sentry/node')
-const { domain, sentry } = require('../../config');
-const { limiter } = require('./rate.limit');
-const helmetConfig = require('./helmetConfig');
-const customError = require('../utils/custom-error');
+import express from "express";
+import path from 'path'
+import cors from 'cors'
+import cookieParser from 'cookie-parser'
+import helmet from 'helmet'
+import { helmetConfig } from "../../config/helmet.js";
+import morgan from 'morgan'
+import trimIncomingRequest from "./trim-incoming.middleware.js";
+import { fileURLToPath } from 'url';
+import logger from "../logger/index.js";
+import configureErrorMiddleware from "./error.middleware.js";
 
-const corsOptions = {
-    origin: [domain.BASE_URL, domain.LANDING_URL], // List of allowed origins
-    methods: 'GET', // Only allowed request according to the task given
-    allowedHeaders: 'Content-Type,Authorization',
-};
+const __filename = fileURLToPath(import.meta.url);
 
-module.exports = (app) => {
+const __dirname = path.dirname(__filename);
+
+const configurePreRouteMiddleware = (app) => {
+
     // Enable trust proxy for handling proxied requests
     app.enable('trust proxy');
 
-    Sentry.init({dsn: sentry.DSN, tracesSampleRate: 1.0});
+    // Enable CORS protection with custom options
+    app.use(cors());
 
-    // Sentry request handler of transactions for performance monitoring.
-    app.use(Sentry.Handlers.requestHandler());
+    // Use helmet middleware to set security headers with default and custom directives
+    app.use(helmet(helmetConfig));
 
-    // TracingHandler creates a trace for every incoming request
-    app.use(Sentry.Handlers.tracingHandler());
-
-    // Serve Public Folder
-    app.use("/", express.static(path.join(__dirname, "..", "..", "public")));
+    // Enable HTTP request logging
+    app.use(morgan("common"));
 
     // Use middleware to parse JSON request bodies
     app.use(express.json());
 
-    // Use middleware for parsing URL-encoded request bodies with extended support
-    app.use(bodyParser.urlencoded({extended: true}));
+    // Serve Public Folder
+    app.use("/", express.static(path.join(__dirname, "..", "..", "public")));
 
-    // Enable CORS protection with custom options
-    app.use(cors(corsOptions));
+    // Express body parser
+    app.use(express.urlencoded({ extended: true }));
 
     // Use middleware to parse cookies
     app.use(cookieParser());
 
     // Use custom middleware to trim object strings
-    app.use(trimRequestBody);
+    app.use(trimIncomingRequest);
 
-    // Set trust proxy level
-    app.set('trust proxy', 1);
+    // Error middleware
+    app.use(configureErrorMiddleware);
 
-    // Configure rate limiting middleware
-    app.use(limiter);
-
-    // Custom "Too Many Requests" Error Handling Middleware for api abuse
-    app.use(customError.customTooManyReqErr);
-
-    // Use helmet middleware to set security headers with default and custom directives
-    app.use(helmet(helmetConfig));
-
-    // Add a custom logger to the Express app
-    app.logger = logger;
+    return app;
+    
 };
+
+export default configurePreRouteMiddleware
