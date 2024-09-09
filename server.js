@@ -18,7 +18,7 @@ app.listen(PORT, async () => {
   
   await connectMongoDB()
 
-  // await MailerInstance.verifyConnection()
+  await MailerInstance.verifyConnection()
 
   logger.info(`:::> Server listening on port ${PORT} @ http://localhost:${PORT} in ${DEPLOYMENT_ENV} mode <:::`);
 
