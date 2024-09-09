@@ -9,7 +9,7 @@ const GLOBAL_CONSTANTS = {
     APP_NAME: "Gidisquare",
     
     SUPPORT_EMAIL: "support@gidisquare.com",
-    DEFAULT_EMAIL_FROM: `${"The Gidisquare Team"} <${process.env.MAILER_USER}>`,
+    DEFAULT_EMAIL_FROM: `${"The Gidisquare Team"} <no-reply@gidisquare.com>`,
     
     ROLES: ['user', 'admin', 'super_admin'],
     
@@ -20,11 +20,11 @@ const GLOBAL_CONSTANTS = {
     },
 
     MAILER: {
-        SMTP_HOST: process.env.MAILER_HOST,
-        SMTP_PORT: process.env.MAILER_PORT,
-        SMTP_USER: process.env.MAILER_USER,
-        SMTP_PASSWORD: process.env.MAILER_PASSWORD,
-        SECURE: process.env.MAILER_SECURE === "true" ? true : false,
+        SMTP_HOST: process.env.SMTP_HOST,
+        SMTP_PORT: process.env.SMTP_PORT,
+        SMTP_USER: process.env.SMTP_USER,
+        SMTP_PASSWORD: process.env.SMTP_PASSWORD,
+        SMTP_SECURE: process.env.SMTP_SECURE === "true" ? true : false,
         REJECT_UNAUTH: process.env.REJECT_UNAUTH === "true" ? true : false
     }
 }
