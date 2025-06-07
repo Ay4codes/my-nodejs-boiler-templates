@@ -29,7 +29,7 @@ class Auth {
 
         if (error) return {success: false, status: 400, message: error.message}
 
-        const user = await User.findOne({_id: data.user_id}).populate({path: 'role', populate: {path: 'privileges'}}).populate('position').populate('department').select('+email_verified +last_seen')
+        const user = await User.findOne({_id: data.user_id}).populate({path: 'role', populate: {path: 'privileges'}, select: 'privileges'}).populate('position').populate('department').select('+email_verified +last_seen')
 
         if (!user) return res.status(404).json(response(false, 'User not found'))
 

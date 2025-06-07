@@ -147,7 +147,7 @@ class RoleServices {
     
         if (error) return {success: false, status: 400, message: error.message}
     
-        const role = await Role.findById(data.id).populate('privileges')
+        const role = await Role.findById(data.id).populate({path: 'privileges', select: 'privileges'})
     
         if (!role) return {success: false, status: 404, message: 'Role not found'}
     
@@ -176,7 +176,7 @@ class RoleServices {
         
         }
 
-        const roles = await Role.find(query).populate('privileges').sort({createdAt: -1}).skip(data.start).limit(data.limit)
+        const roles = await Role.find(query).populate({path: 'privileges', select: 'privileges'}).sort({createdAt: -1}).skip(data.start).limit(data.limit)
         
         return {success: true, status: 200, message: 'Roles retrieved successfully', data: roles}
     
@@ -190,7 +190,7 @@ class RoleServices {
         
         const query = {user: data.user}
         
-        const history = await RoleHistory.find(query).populate('user', 'first_name last_name email').populate({path: 'role', populate: {path: 'privileges'}}).populate('updatedBy', 'first_name last_name email').sort({createdAt: -1}).skip(data.start).limit(data.limit)
+        const history = await RoleHistory.find(query).populate('user', 'first_name last_name email').populate({path: 'role', populate: {path: 'privileges', select: 'privileges'}}).populate('updatedBy', 'first_name last_name email').sort({createdAt: -1}).skip(data.start).limit(data.limit)
 
         return {success: true, status: 200, message: 'Role history retrieved successfully', data: history}
     
