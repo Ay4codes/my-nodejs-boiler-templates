@@ -4,6 +4,34 @@ import MailsTemplates from '../email-template/mails/mails.js'
 
 class MailServices {
 
+    async sendOnboardingEmail (user, redirect_url, verification) {
+
+        return mailer.sendMail({
+
+            to: user.email,
+
+            subject: `Welcome to ${CONFIG.APP_NAME}`,
+
+            html:  MailsTemplates.onboardUserEmail(user.first_name, `${redirect_url}?target=${user?._id}&code=${verification.code}&token=${verification.token}`),
+            
+        })
+        
+    }
+
+    async sendOnboardedEmail (user) {
+
+        return mailer.sendMail({
+
+            to: user.email,
+
+            subject: `Welcome Aboard, ${user?.first_name}!`,
+
+            html:  MailsTemplates.onboardedUserEmail(user.first_name),
+            
+        })
+        
+    }
+
     async sendWelcomeEmail (user, verification) {
 
         return mailer.sendMail({
@@ -34,7 +62,7 @@ class MailServices {
     }
 
 
-    async sendPasswordResetRequestEmail (user, verification) {
+    async sendPasswordResetRequestEmail (user, redirect_url, verification) {
 
         return mailer.sendMail({
 
@@ -42,7 +70,7 @@ class MailServices {
 
             subject: `Password Reset Request`,
 
-            html:  MailsTemplates.passwordResetRequestEmail(user.first_name, CONFIG.HOST.LANDING_BASE_URL + `/verify-email?code=${verification.code}&token=${verification.token}`),
+            html:  MailsTemplates.passwordResetRequestEmail(user.first_name, `${redirect_url}?code=${verification.code}&token=${verification.token}`),
             
         })
         

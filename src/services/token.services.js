@@ -1,166 +1,147 @@
 import crypto from 'crypto'
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
-import { CONFIG } from '../../config/index.js';
-const AUTH = CONFIG.AUTH
+import { CONFIG } from '../../config/index.js'
 import CustomDate from '../utils/date.js'
-import Token from '../models/token.model.js';
+import Token from '../models/token.model.js'
+import User from '../models/user.model.js'
+
+const AUTH = CONFIG.AUTH
 
 class TokenServices {
-
+    
     async generateAuthToken(user) {
-        
-        const refreshToken = crypto.randomBytes(32).toString("hex");
-
-        const hashedRefreshToken = bcrypt.hashSync(refreshToken, AUTH.BCRYPT_SALT);
-
+    
+        const refreshToken = crypto.randomBytes(32).toString("hex")
+    
+        const hashedRefreshToken = bcrypt.hashSync(refreshToken, AUTH.BCRYPT_SALT)
+    
         await new Token({user: user._id, token: hashedRefreshToken, type: AUTH.TOKEN_TYPES.refresh, expiredAt: CustomDate.now() + AUTH.REFRESH_TOKEN_EXPIRES_IN}).save()
 
-        const accessTokenJwt = jwt.sign({ user_id: user._id, role: user.role, email: user.email }, AUTH.JWT_SECRET, { expiresIn: AUTH.TOKEN_EXPIRES_IN / 1000});
+        const accessTokenJwt = jwt.sign({ user_id: user._id, roles: user.roles.map(r => r._id.toString()), email: user.email }, AUTH.JWT_SECRET, { expiresIn: AUTH.TOKEN_EXPIRES_IN / 1000 })
 
-        const refreshTokenJwt = jwt.sign({ user_id: user._id, refresh_token: refreshToken}, AUTH.JWT_SECRET, { expiresIn: AUTH.REFRESH_TOKEN_EXPIRES_IN / 1000});
+        const refreshTokenJwt = jwt.sign({ user_id: user._id }, AUTH.JWT_SECRET, { expiresIn: AUTH.REFRESH_TOKEN_EXPIRES_IN / 1000 })
 
-        return {success: true, status: 200, data: {token: accessTokenJwt, refresh_token: refreshTokenJwt}}
+        return {success: true, status: 200, data: {token: accessTokenJwt, refresh_token: refreshTokenJwt, raw_refresh_token: refreshToken}}
+    
+    }
+
+    generateOtp(length) {
+
+        const otp = crypto.randomBytes(2).readUInt16BE(0) % 100000;
+        
+        const code = otp.toString().padStart(length, (Math.floor(Math.random() * 9) + 1).toString());
+
+        return {success: true, status: 200, data: {code: code}}
 
     }
 
-
-    async refreshAuthToken(refresh_token_jwt) {
-
+    async refreshAuthToken(refresh_token_jwt, refreshToken) {
+        
         const refreshTokenValue = await this.decodeToken(refresh_token_jwt)
+        
+        if (!refreshTokenValue.status) return {success: false, status: 401, message: 'Refresh token is expired', issue: refreshTokenValue.issue}
+        
+        const token = await Token.findOne({user: refreshTokenValue.user.user_id, type: AUTH.TOKEN_TYPES.refresh, expiredAt: {$gt: CustomDate.now()}})
 
-        if (!refreshTokenValue.status) return {success: false, status: 401, message: 'Refresh token is expired', issue: '-token_expired'}
-
-        const findRefreshToken = await Token.find({user: refreshTokenValue.user.user_id, type: AUTH.TOKEN_TYPES.refresh})
-
-        if (findRefreshToken.length === 0) return {success: false, status: 401, message: 'Refresh token is expired', issue: '-token_expired'}
-
-        for (let i = 0; i < findRefreshToken.length; i++) {
-
-            const token = findRefreshToken[i];
-            
-            const verifyToken = await bcrypt.compare(refreshTokenValue.user.refresh_token, token.token)
-
-            if (verifyToken) {
-
-                await Token.deleteOne({_id: token._id})
-
-                const user = await User.findOne({_id: refreshTokenValue.user.user_id})
-
-                return await this.generateAuthToken(user)
-
-            }
-
-        }
-
-        return {success: false, status: 401, message: 'Refresh token is expired', issue: '-token_expired'}
-
+        if (!token) return {success: false, status: 401, message: 'Refresh token is expired', issue: '-token_expired'}
+        
+        const verifyToken = await bcrypt.compare(refreshToken, token.token)
+        
+        if (!verifyToken) return {success: false, status: 401, message: 'Invalid refresh token', issue: '-token_invalid'}
+        
+        await Token.deleteOne({_id: token._id})
+        
+        const user = await User.findOne({_id: refreshTokenValue.user.user_id}).populate('roles')
+        
+        if (!user) return {success: false, status: 404, message: 'User not found'}
+        
+        return await this.generateAuthToken(user)
+    
     }
 
-
-    async revokeRefreshToken(refresh_token_jwt) {
-
+    async revokeRefreshToken(refresh_token_jwt, refreshToken) {
+        
         const refreshTokenValue = await this.decodeToken(refresh_token_jwt)
+        
+        if (!refreshTokenValue.status) return {success: false, status: 401, message: 'Refresh token is expired', issue: refreshTokenValue.issue}
+        
+        const token = await Token.findOne({user: refreshTokenValue.user.user_id, type: AUTH.TOKEN_TYPES.refresh, expiredAt: {$gt: CustomDate.now()}})
 
-        if (!refreshTokenValue.status) return {success: false, status: 401, message: 'Refresh token is expired', issue: '-token_expired'}
-
-        const findRefreshToken = await Token.find({user: refreshTokenValue.user.user_id, type: AUTH.TOKEN_TYPES.refresh})
-
-        if (findRefreshToken.length === 0) return {success: false, status: 401, message: 'Refresh token is expired', issue: '-token_expired'}
-
-        for (let i = 0; i < findRefreshToken.length; i++) {
-
-            const token = findRefreshToken[i];
-            
-            const verifyToken = await bcrypt.compare(refreshTokenValue.user.refresh_token, token.token)
-
-            if (verifyToken) {
-
-                await Token.deleteOne({_id: token._id})
-
-                return {success: true, status: 200, message: 'Refresh token revoke successful'}
-                
-            }
-            
-        }
-
-        return {success: false, status: 401, message: 'Refresh token is expired', issue: '-token_expired'}
-
+        if (!token) return {success: false, status: 401, message: 'Refresh token is expired', issue: '-token_expired'}
+        
+        const verifyToken = await bcrypt.compare(refreshToken, token.token)
+        
+        if (!verifyToken) return {success: false, status: 401, message: 'Invalid refresh token', issue: '-token_invalid'}
+        
+        await Token.deleteOne({_id: token._id})
+        
+        return {success: true, status: 200, message: 'Refresh token revoked successfully'}
+    
     }
-
 
     async genereteToken(user, token_type) {
 
         await Token.deleteMany({user: user._id, type: token_type})
 
-        const otp = crypto.randomBytes(3).readUInt16BE(0) % 1000000; //only numbers
-
-        const code = otp.toString().padStart(6, (Math.floor(Math.random() * 9) + 1).toString()); // Ensure it's exactly 6 digits by left-padding with a number if necessary
+        const code = await this.generateOtp(5)
 
         const token = crypto.randomBytes(32).toString("hex")
 
-        const hashedCode = bcrypt.hashSync(code, AUTH.BCRYPT_SALT)
+        const hashedCode = bcrypt.hashSync(code.data.code, AUTH.BCRYPT_SALT)
 
         const hashedToken = bcrypt.hashSync(token, AUTH.BCRYPT_SALT)
 
         await new Token({code: hashedCode, token: hashedToken, user: user._id, type: token_type, expiredAt: CustomDate.now() + AUTH.TOKEN_EXPIRES_IN}).save()
 
-        return {success: true, status: 200, data: {code: code, token: token}}
+        return {success: true, status: 200, data: {code: code.data.code, token: token}}
 
     }
-
 
     async verifyToken(user, token_type, code, token) {
-
-        const findToken = await Token.findOne({user: user._id, type: token_type})
-
-        if (!findToken) return {success: false, status: 401, message: "Code or Token is exipred", issue: '-token_expired'}
-
+        
+        const findToken = await Token.findOne({user: user._id, type: token_type, expiredAt: {$gt: CustomDate.now()}})
+        
+        if (!findToken) return {success: false, status: 401, message: "Code or token is expired", issue: '-token_expired'}
+        
         const verifyCode = await bcrypt.compare(code, findToken.code)
-
-        const verifyToken = await bcrypt.compare(token || '', findToken.token)
-
+        
+        const verifyToken = token ? await bcrypt.compare(token, findToken.token) : false
+        
         if (!token) {
-
-            if (!verifyCode) return {success: false, status: 401, message: 'Code is Invalid', issue: '-code_invalid'}
-
-            await Token.deleteOne({user: user._id, type: token_type})
-
-            return {success: true, status: 200, message: 'Code Verified Successful'}
-
+        
+            if (!verifyCode) return {success: false, status: 401, message: 'Invalid code', issue: '-code_invalid'}
+        
+            await Token.deleteOne({_id: findToken._id})
+        
+            return {success: true, status: 200, message: 'Code verified successfully'}
+        
         }
-
-        if (!verifyToken || !verifyCode) return {success: false, status: 401, message: 'Url is Invalid', issue: '-url_expired'}
-
-        await Token.deleteOne({user: user._id, type: token_type})
-
-        return {success: true, status: 200, message: 'Url Verified Successful'}
-
-    }
-
-
-    async decodeToken(token) {
-
-        let result
-
-        jwt.verify(token, AUTH.JWT_SECRET, function(err, decoded) {
-
-            if (err) {
-
-                result = {status: false, user: null}
-
-            } else {
-
-                result = {status: true, user: decoded}
-
-            }
-
-        });
-
-        return result
-
-    }
+        
+        if (!verifyToken || !verifyCode) return {success: false, status: 401, message: 'Invalid URL', issue: '-url_expired'}
+        
+        await Token.deleteOne({_id: findToken._id})
+        
+        return {success: true, status: 200, message: 'URL verified successfully'}
     
+    }
+
+    decodeToken(token) {
+        
+        try {
+        
+            const decoded = jwt.verify(token, AUTH.JWT_SECRET)
+        
+            return {status: true, user: decoded}
+        
+        } catch (err) {
+        
+            return {status: false, user: null, issue: err.name === 'TokenExpiredError' ? '-token_expired' : '-token_invalid'}
+        
+        }
+    
+    }
+
 }
 
 export default new TokenServices

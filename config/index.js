@@ -6,14 +6,12 @@ dotenv.config();
 const DEPLOYMENT_ENV = process.env.NODE_ENV || "development";
 
 const GLOBAL_CONSTANTS = {
-    APP_NAME: "Gidisquare",
+    APP_NAME: "Node Js Boiler Template",
+
+    DOMAIN: "node.com",
     
-    SUPPORT_EMAIL: "support@gidisquare.com",
-    DEFAULT_EMAIL_FROM: `${"The Gidisquare Team"} <no-reply@gidisquare.com>`,
-    
-    ROLES: ['user', 'admin', 'super_admin'],
-    
-    SUPPORTED_COUNTRIES: ['UK'],
+    SUPPORT_EMAIL: "support@example.com",
+    DEFAULT_EMAIL_FROM: `${"The Node Js Boiler Template Team"} <no-reply@gidisquare.com>`,
     
     ALERTS: {
         SERVER_BACKEND_TEAM_EMAILS: ['ay4codes@gmail.com'],
@@ -37,6 +35,7 @@ const CONFIG_BUILDER = {
             API_BASE_URL: "https://localhost:4000",
             AUTH_BASE_URL: "https://localhost:3000",
             LANDING_BASE_URL: "https://localhost:3000",
+            CORS_OPTION: ['*'],
         },
         
         AUTH: {
@@ -47,7 +46,8 @@ const CONFIG_BUILDER = {
             TOKEN_TYPES: {
                 refresh: 'refresh_token',
                 email_verification: 'email_verification',
-                password_reset: 'password_reset'
+                password_reset: 'password_reset',
+                onboarding: 'onboarding',
             }
         },
         
@@ -61,6 +61,10 @@ const CONFIG_BUILDER = {
                 WHITE_LISTED: process.env.WHITE_LISTED_IPS || [],
                 STATIC_OUTBOUND: process.env.STATIC_OUTBOUND || []
             }
+        },
+
+        UPLOADS: {
+            PATH: 'uploads'
         }
     },
 
@@ -72,6 +76,13 @@ const CONFIG_BUILDER = {
             API_BASE_URL: "https://localhost:4000",
             AUTH_BASE_URL: "https://localhost:3000",
             LANDING_BASE_URL: "https://localhost:3000",
+            CORS_OPTION: [
+                `https://api.${GLOBAL_CONSTANTS.DOMAIN}`,
+                `https://${GLOBAL_CONSTANTS.DOMAIN}`,
+                `https://staging.${GLOBAL_CONSTANTS.DOMAIN}`,
+                `https://admin.${GLOBAL_CONSTANTS.DOMAIN}`,
+                `https://staging.admin.${GLOBAL_CONSTANTS.DOMAIN}`,
+            ]
         },
         
         AUTH: {
@@ -82,7 +93,8 @@ const CONFIG_BUILDER = {
             TOKEN_TYPES: {
                 refresh: 'refresh_token',
                 email_verification: 'email_verification',
-                password_reset: 'password_reset'
+                password_reset: 'password_reset',
+                onboarding: 'onboarding',
             }
         },
         
@@ -96,6 +108,10 @@ const CONFIG_BUILDER = {
                 WHITE_LISTED: process.env.WHITE_LISTED_IPS || [],
                 STATIC_OUTBOUND: process.env.STATIC_OUTBOUND || []
             }
+        },
+
+        UPLOADS: {
+            PATH: '/var/uploads'
         }
     }
 }

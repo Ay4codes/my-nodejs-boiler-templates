@@ -1,0 +1,679 @@
+{
+	"openapi": "3.0.0",
+	"info": {
+		"title": "Node Js Boiler Template",
+		"version": "1.0.0",
+		"description": "Api Documentation"
+	},
+	"servers": [
+		{
+			"url": "http://localhost:4000/v1",
+			"description": "Staging (production - behaviour) server"
+		}
+	],
+	"security": [
+		{ "apiKeyAuth": [] }
+	],
+	"paths": {
+		"/countries": {
+			"get": {
+				"tags": ["Countries"],
+				"summary": "Get all countries",
+				"description": "Retrieves a list of all countries sorted by common name.",
+				"responses": {
+					"200": {
+						"description": "Countries retrieved successfully",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/CountriesResponse"
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Server error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/auth/register": {
+			"post": {
+				"tags": ["Authentication"],
+				"summary": "Register a new user",
+				"description": "Creates a new user account and assigns the 'user' role.",
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/RegisterRequest"
+							}
+						}
+					}
+				},
+				"responses": {
+					"201": {
+						"description": "User registered successfully",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/RegisterResponse"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Validation error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"409": {
+						"description": "User already exists",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "User role not found",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/auth/login": {
+			"post": {
+				"tags": ["Authentication"],
+				"summary": "Log in a user",
+				"description": "Authenticates a user and returns JWT tokens.",
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/LoginRequest"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Login successful",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/LoginResponse"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Validation error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Invalid credentials, account disabled, or email not verified",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "User not found",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/auth/logout": {
+			"post": {
+				"tags": ["Authentication"],
+				"summary": "Log out a user",
+				"description": "Revokes the refresh token.",
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/LogoutRequest"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Logout successful",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/SuccessResponse"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Validation error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Invalid token",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/auth/refresh-tokens": {
+			"post": {
+				"tags": ["Authentication"],
+				"summary": "Request password reset",
+				"description": "Sends a password reset email with a redirect URL if the email exists.",
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/RequestPasswordResetRequest"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Password reset email sent",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/SuccessResponse"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Validation error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/auth/verify-email": {
+			"post": {
+				"tags": ["Authentication"],
+				"summary": "Verify user email",
+				"description": "Verifies a user's email using a code and optional token.",
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/VerifyEmailRequest"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Email verified successfully",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/SuccessResponse"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Validation error or email already verified",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Invalid verification code or token",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "User not found",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/auth/request-password-reset": {
+			"post": {
+				"tags": ["Authentication"],
+				"summary": "Request password reset",
+				"description": "Sends a password reset email if the email exists.",
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/RequestPasswordResetRequest"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Password reset email sent",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/SuccessResponse"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Validation error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/auth/reset-password": {
+			"post": {
+				"tags": ["Authentication"],
+				"summary": "Reset user password",
+				"description": "Resets the user's password using a code and token.",
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/ResetPasswordRequest"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Password reset successful",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/SuccessResponse"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Validation error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Invalid code or token",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "Invalid reset request",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	},
+	"components": {
+		"securitySchemes": {
+			"apiKeyAuth": {
+				"type": "apiKey",
+				"in": "header",
+				"name": "apikey",
+				"required": true,
+				"description": "Your API key goes here"
+			},
+			"bearerAuth": {
+				"type": "http",
+				"scheme": "bearer",
+				"bearerFormat": "JWT"
+			}
+		},
+		"schemas": {
+			"RegisterRequest": {
+				"type": "object",
+				"required": ["firstname", "lastname", "email", "password"],
+				"properties": {
+					"firstname": {
+						"type": "string",
+						"minLength": 3,
+						"maxLength": 30,
+						"description": "User's first name"
+					},
+					"lastname": {
+						"type": "string",
+						"minLength": 3,
+						"maxLength": 30,
+						"description": "User's last name"
+					},
+					"country": {
+						"type": "string",
+						"maxLength": 100,
+						"description": "User's country"
+					},
+					"email": {
+						"type": "string",
+						"format": "email",
+						"description": "User's email address"
+					},
+					"phone_number": {
+						"type": "string",
+						"minLength": 6,
+						"maxLength": 15,
+						"description": "User's phone number"
+					},
+					"password": {
+						"type": "string",
+						"minLength": 8,
+						"pattern": "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)",
+						"description": "Password (must contain lowercase, uppercase, and digit)"
+					}
+				}
+			},
+			"RegisterResponse": {
+				"type": "object",
+				"properties": {
+					"success": { "type": "boolean" },
+					"message": { "type": "string" },
+					"data": {
+						"type": "object",
+						"properties": {
+							"token": {
+								"$ref": "#/components/schemas/Token"
+							},
+							"user": {
+								"$ref": "#/components/schemas/User"
+							}
+						}
+					}
+				}
+			},
+			"LoginRequest": {
+				"type": "object",
+				"required": ["email", "password"],
+				"properties": {
+					"email": {
+						"type": "string",
+						"format": "email",
+						"description": "User's email address"
+					},
+					"password": {
+						"type": "string",
+						"minLength": 8,
+						"pattern": "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)",
+						"description": "Password (must contain lowercase, uppercase, and digit)"
+					}
+				}
+			},
+			"LoginResponse": {
+				"type": "object",
+				"properties": {
+					"success": { "type": "boolean" },
+					"message": { "type": "string" },
+					"data": {
+						"type": "object",
+						"properties": {
+							"token": {
+								"$ref": "#/components/schemas/Token"
+							}
+						}
+					},
+					"issue": { "type": "string", "nullable": true }
+				}
+			},
+			"LogoutRequest": {
+				"type": "object",
+				"required": ["refresh_token", "raw_refresh_token"],
+				"properties": {
+					"refresh_token": {
+						"type": "string",
+						"description": "Refresh token to revoke"
+					},
+					"raw_refresh_token": {
+						"type": "string",
+						"description": "Raw refresh token"
+					}
+				}
+			},
+			"RefreshTokenRequest": {
+				"type": "object",
+				"required": ["refresh_token", "raw_refresh_token"],
+				"properties": {
+					"refresh_token": {
+						"type": "string",
+						"description": "Refresh token to refresh"
+					},
+					"raw_refresh_token": {
+						"type": "string",
+						"description": "Raw refresh token"
+					}
+				}
+			},
+			"VerifyEmailRequest": {
+				"type": "object",
+				"required": ["user_id", "code"],
+				"properties": {
+					"user": {
+						"type": "string",
+						"pattern": "^[0-9a-fA-F]{24}$",
+						"description": "User ID"
+					},
+					"code": {
+						"type": "string",
+						"minLength": 6,
+						"maxLength": 6,
+						"description": "Verification code"
+					},
+					"token": {
+						"type": "string",
+						"description": "Verification token (optional)"
+					}
+				}
+			},
+			"RequestPasswordResetRequest": {
+				"type": "object",
+				"required": ["email", "redirect_url"],
+				"properties": {
+					"email": {
+						"type": "string",
+						"format": "email",
+						"description": "User's email address"
+					},
+					"redirect_url": {
+						"type": "string",
+						"format": "uri",
+						"description": "URL to redirect user for password reset"
+					}
+				}
+			},
+			"ResetPasswordRequest": {
+				"type": "object",
+				"required": ["email", "code", "token", "new_password"],
+				"properties": {
+					"email": {
+						"type": "string",
+						"format": "email",
+						"description": "User's email address"
+					},
+					"code": {
+						"type": "string",
+						"minLength": 6,
+						"maxLength": 6,
+						"description": "Reset code"
+					},
+					"token": {
+						"type": "string",
+						"description": "Reset token"
+					},
+					"new_password": {
+						"type": "string",
+						"minLength": 8,
+						"pattern": "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)",
+						"description": "New password (must contain lowercase, uppercase, and digit)"
+					}
+				}
+			},
+			"Token": {
+				"type": "object",
+				"properties": {
+					"token": { "type": "string", "description": "Access token" },
+					"refresh_token": { "type": "string", "description": "Refresh token" },
+					"raw_refresh_token": { "type": "string", "description": "Raw refresh token" }
+				}
+			},
+			"User": {
+				"type": "object",
+				"properties": {
+					"_id": { "type": "string", "description": "User ID" },
+					"first_name": { "type": "string", "description": "First name" },
+					"last_name": { "type": "string", "description": "Last name" },
+					"email": { "type": "string", "format": "email", "description": "Email address" },
+					"country": { "type": "string", "description": "Country" },
+					"phone_number": { "type": "string", "description": "Phone number" },
+					"roles": {
+						"type": "array",
+						"items": { "type": "string" },
+						"description": "Array of role IDs"
+					},
+					"email_verified": { "type": "boolean", "description": "Email verification status" },
+					"account_disabled": { "type": "boolean", "description": "Account disabled status" }
+				}
+			},
+			"CountriesResponse": {
+				"type": "object",
+				"properties": {
+					"success": { "type": "boolean" },
+					"message": { "type": "string" },
+					"data": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/Country"
+						}
+					}
+				}
+			},
+			"Country": {
+				"type": "object",
+				"properties": {
+					"_id": { "type": "string", "description": "Country ID" },
+					"name": {
+						"type": "object",
+						"properties": {
+							"common": { "type": "string", "description": "Common name of the country" }
+						}
+					}
+				}
+			},
+
+			"SuccessResponse": {
+				"type": "object",
+				"properties": {
+					"success": { "type": "boolean" },
+					"message": { "type": "string" }
+				}
+			},
+			"ErrorResponse": {
+				"type": "object",
+				"properties": {
+					"success": { "type": "boolean" },
+					"message": { "type": "string" },
+					"issue": { "type": "string", "nullable": true }
+				}
+			}
+		}
+	}
+}

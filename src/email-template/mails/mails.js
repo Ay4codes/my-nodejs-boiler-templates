@@ -22,6 +22,37 @@ class MailTemplates {
     }
 
 
+    onboardUserEmail = (firstname, setupLink) => {
+        return (
+            Layout(`
+                <section>
+                    <h3>Welcome, ${firstname}! 👋</h3>
+                    <p>Your account for ${CONFIG.APP_NAME} has been created by an administrator. We're thrilled to have you on board!</p>
+                    <p>To get started, please set up your account by creating a password using the link below:</p>
+                    ${Button('Set Up Your Account', setupLink)}
+                    <p>If the button above doesn't work, you can also click or copy the following link to your browser:</p>
+                    <a style="display: block; color: ${colors.primary};" href="${setupLink}">${setupLink}</a>
+                    <p>If you have any questions or need assistance, feel free to contact our support team.</p>
+                </section>
+            `)
+        )
+    }
+
+
+    onboardedUserEmail = (firstname) => {
+        return (
+            Layout(`
+                <section>
+                    <h3>Welcome, ${firstname}! 🎉</h3>
+                    <p>Your account for ${CONFIG.APP_NAME} has been successfully created and is now active! We're thrilled to have you on board.</p>
+                    <p>You can now log in and start exploring all the features ${CONFIG.APP_NAME} has to offer.</p>
+                    <p>If you have any questions or need assistance, feel free to contact our support team.</p>
+                </section>
+            `)
+        )
+    }
+
+
     emailVerificationEmail = (firstname, code, verificationLink) => {
         return (
             Layout(`

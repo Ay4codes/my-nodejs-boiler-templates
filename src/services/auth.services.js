@@ -4,6 +4,7 @@ import User from '../models/user.model.js';
 import ValidationSchema from '../utils/validators.schema.js';
 import TokenServices from './token.services.js';
 import mailerServices from './mailer.services.js'
+import RoleHistory from '../models/role.history.model.js';
 
 class AuthServices {
 
@@ -17,15 +18,23 @@ class AuthServices {
 
         const hashedPassword = bcrypt.hashSync(data.password, CONFIG.AUTH.BCRYPT_SALT)
 
-        const newUser = {first_name: data.firstname, last_name: data.lastname, email: data.email, password: hashedPassword}
+        const newUser = {first_name: data.firstname, last_name: data.lastname, email: data.email, country: data.country, password: hashedPassword}
 
         data.phone_number && (query.push({ phone_number: data.phone_number }), newUser.phone_number = data.phone_number);
 
-        const userExist = await User.findOne({ $or: query})
+        const userExist = await User.findOne({$or: query})
 
-        if (userExist) return {success: false, status: 409, message: `User already exist`}
+        if (userExist) return {success: false, status: 409, message: `Phone number or email already exist`}
+
+        const defaultRole = await Role.findOne({name: 'user'})
+
+        if (!defaultRole) return {success: false, status: 500, message: 'User role not found', issue: '-role_not_found'}
+        
+        newUser.roles = [defaultRole._id]
 
         const user = await new User(newUser).save()
+
+        await new RoleHistory({user: user._id, role: defaultRole._id, action: 'assign'}).save()
 
         const token = await TokenServices.generateAuthToken(user)
 
@@ -56,7 +65,7 @@ class AuthServices {
     
         const token = await TokenServices.generateAuthToken(user);
     
-        if (!user.email_verified) {
+        if (!user.status === 'pending') {
 
             const emailVerification = await TokenServices.genereteToken(user, CONFIG.AUTH.TOKEN_TYPES.email_verification)
 
@@ -66,8 +75,6 @@ class AuthServices {
         
         }
     
-        if (!user.identity_verified) return { success: true, status: 200, message: 'Login successful', data: { token: token.data }, issue: '-identity_not_verified' };
-
         return { success: true, status: 200, message: 'Login successful', data: { token: token.data }};
         
     }
@@ -109,7 +116,7 @@ class AuthServices {
 
         if (error) return {success: false, status: 400, message: error.message}
 
-        const user = await User.findOne({_id: data.user_id})
+        const user = await User.findOne({_id: data.user})
 
         if (!user) return { success: false, status: 404, message: 'User does not exist' };
 
@@ -119,7 +126,7 @@ class AuthServices {
 
         if (!verifyToken.success) return {success: false, status: verifyToken.status, message: verifyToken.message, issue: verifyToken.issue}
 
-        data.with_identity ? await User.updateOne({_id: data.user_id}, {$set: {email_verified: true, identity_verified: true}}) : await User.updateOne({_id: data.user_id}, {$set: {email_verified: true}})
+        await User.updateOne({_id: data.user}, {$set: {email_verified: true, status: 'active', updatedBy: 'system'}})
         
         return {success: true, status: 200, message: verifyToken.message}
 
@@ -136,9 +143,9 @@ class AuthServices {
 
         if (!user) return { success: false, status: 404, message: 'User does not exist'};
 
-        const emailVerification = await TokenServices.genereteToken(user, CONFIG.AUTH.TOKEN_TYPES.password_reset)
+        const passwordResetRequest = await TokenServices.genereteToken(user, CONFIG.AUTH.TOKEN_TYPES.password_reset)
         
-        await mailerServices.sendPasswordResetRequestEmail(user, emailVerification.data)
+        await mailerServices.sendPasswordResetRequestEmail(user, data?.redirect_url, passwordResetRequest.data)
 
         return {success: true, status: 200, message: 'Password reset request successful'}
 

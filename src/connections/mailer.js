@@ -24,22 +24,14 @@ class Mailer {
 
                 port: mailer.SMTP_PORT,
                 
-                secure: mailer.SECURE,
+                secure: mailer.SMTP_SECURE,
                 
                 auth: {
 
-                    user: mailer.USER,
+                    user: mailer.SMTP_USER,
 
-                    pass: mailer.PASSWORD,
+                    pass: mailer.SMTP_PASSWORD,
                 
-                },
-
-                tls: {
-
-                    rejectUnauthorized: mailer.REJECT_UNAUTH,
-
-                    ciphers: 'SSLv3'
-                    
                 }
 
             });

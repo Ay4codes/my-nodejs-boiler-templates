@@ -1,5 +1,6 @@
 import express from 'express';
 import AuthCtrl from '../controllers/authCtrl.js';
+import Auth from '../middleware/auth.middleware.js'
 
 const router = express.Router()
 
@@ -9,12 +10,12 @@ router.post('/login', AuthCtrl.loginUser)
 
 router.get('/logout', AuthCtrl.logoutUser)
 
-router.get('/refresh-tokens', AuthCtrl.refreshToken)
+router.get('/refresh-token', Auth.authGuard, AuthCtrl.refreshToken)
 
-router.post('/verify-email', AuthCtrl.verifyEmail)
+router.put('/verify-email', AuthCtrl.verifyEmail)
 
 router.post('/request-password-reset', AuthCtrl.requestPasswordReset)
 
-router.post('/reset-password', AuthCtrl.resetPassword)
+router.put('/reset-password', AuthCtrl.resetPassword)
 
 export default router;
