@@ -1,10 +1,15 @@
 import { CONFIG } from '../../config/index.js'
 import mailer from '../connections/mailer.js'
 import MailsTemplates from '../email-template/mails/mails.js'
+import logger from '../logger/index.js'
 
 class MailServices {
 
-    async sendOnboardingEmail (user, redirect_url, verification) {
+    async sendOnboardingEmail (user, redirectUrl, verification) {
+        
+        const finalUrl = `${redirectUrl}?token=${verification.token}`
+        
+        console.log(finalUrl)
 
         return mailer.sendMail({
 
@@ -12,7 +17,7 @@ class MailServices {
 
             subject: `Welcome to ${CONFIG.APP_NAME}`,
 
-            html:  MailsTemplates.onboardUserEmail(user.first_name, `${redirect_url}?target=${user?._id}&code=${verification.code}&token=${verification.token}`),
+            html:  MailsTemplates.onboardUserEmail(user.firstName, finalUrl),
             
         })
         
@@ -24,15 +29,19 @@ class MailServices {
 
             to: user.email,
 
-            subject: `Welcome Aboard, ${user?.first_name}!`,
+            subject: `Welcome Aboard, ${user?.firstName}!`,
 
-            html:  MailsTemplates.onboardedUserEmail(user.first_name),
+            html:  MailsTemplates.onboardedUserEmail(user.firstName),
             
         })
         
     }
 
-    async sendWelcomeEmail (user, verification) {
+    async sendWelcomeEmail (user, redirectUrl, verification) {
+
+        const finalUrl = `${redirectUrl}?&token=${verification.token}`
+
+        console.log(finalUrl)
 
         return mailer.sendMail({
 
@@ -40,14 +49,18 @@ class MailServices {
 
             subject: `Welcome to ${CONFIG.APP_NAME}`,
 
-            html:  MailsTemplates.welcomeUserEmail(user.first_name, verification.code, CONFIG.HOST.LANDING_BASE_URL + `/verify-email?code=${verification.code}&token=${verification.token}`),
+            html:  MailsTemplates.welcomeUserEmail(user.firstName, finalUrl),
             
         })
         
     }
 
 
-    async sendEmailVerificationEmail (user, verification) {
+    async sendEmailVerificationEmail (user, redirectUrl, verification) {
+
+        const finalUrl = `${redirectUrl}?token=${verification.token}`
+
+        console.log(finalUrl)
 
         return mailer.sendMail({
 
@@ -55,14 +68,18 @@ class MailServices {
 
             subject: `Verify your email address`,
 
-            html:  MailsTemplates.emailVerificationEmail(user.first_name, verification.code, CONFIG.HOST.LANDING_BASE_URL + `/verify-email?code=${verification.code}&token=${verification.token}`),
+            html:  MailsTemplates.emailVerificationEmail(user.firstName, finalUrl),
             
         })
         
     }
 
 
-    async sendPasswordResetRequestEmail (user, redirect_url, verification) {
+    async sendPasswordResetRequestEmail (user, redirectUrl, verification) {
+
+        const finalUrl = `${redirectUrl}?&token=${verification.token}`
+
+        console.log(finalUrl)
 
         return mailer.sendMail({
 
@@ -70,7 +87,7 @@ class MailServices {
 
             subject: `Password Reset Request`,
 
-            html:  MailsTemplates.passwordResetRequestEmail(user.first_name, `${redirect_url}?code=${verification.code}&token=${verification.token}`),
+            html:  MailsTemplates.passwordResetRequestEmail(user.firstName, finalUrl),
             
         })
         

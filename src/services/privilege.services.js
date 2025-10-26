@@ -1,18 +1,21 @@
 import { PRIVILEGES } from '../constants/Privileges.js'
 import Privilege from '../models/privilege.model.js'
+import Role from '../models/role.model.js'
 import ValidationSchema from '../utils/validators.schema.js'
 
 class PrivilegeServices {
     
     async seedPrivileges() {
+     
+        const existingPrivileges = await Privilege.find({}, 'name').lean()
+     
+        const existingNames = existingPrivileges.map(p => p.name)
+     
+        const newPrivileges = PRIVILEGES.filter(p => !existingNames.includes(p.name)).map(({name, description}) => ({name, description, createdBy: 'system', updatedBy: 'system'}))
         
-        const privilegeCount = await Privilege.countDocuments()
+        if (newPrivileges.length === 0) return {success: true, status: 200, message: 'No new privileges to seed'}
         
-        if (privilegeCount > 0) return {success: true, status: 200, message: 'Privileges already seeded'}
-        
-        const privileges = PRIVILEGES.map(({name, description}) => ({name, description, createdBy: 'system', updatedBy: 'system'}))
-        
-        await Privilege.insertMany(privileges)
+        await Privilege.insertMany(newPrivileges)
         
         return {success: true, status: 200, message: 'Privileges seeded successfully'}
     
@@ -38,7 +41,7 @@ class PrivilegeServices {
 
     async getPrivilege(user, id) {
 
-        const {error, value: data} = ValidationSchema.updatePrivilege.validate({id})
+        const {error, value: data} = ValidationSchema.getPrivilege.validate({id})
         
         if (error) return {success: false, status: 400, message: error.message}
     
@@ -64,6 +67,15 @@ class PrivilegeServices {
         if (data.status) query.status = data.status
     
         const getPrivileges = await Privilege.find(query).sort({createdAt: -1}).skip(data.start).limit(data.limit)
+    
+        return {success: true, status: 200, message: 'Privileges retrieved successfully', data: getPrivileges}
+    
+    }
+
+
+    async getAllPrivilegesList(user) {
+
+        const getPrivileges = await Privilege.find({}).sort({createdAt: -1}).lean()
     
         return {success: true, status: 200, message: 'Privileges retrieved successfully', data: getPrivileges}
     

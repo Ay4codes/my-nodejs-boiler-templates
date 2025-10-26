@@ -13,7 +13,7 @@ class Mailer {
 
             if (!mailer.SMTP_PORT) return logger.error('SMTP-PORT required. --not Found')
 
-            if (!CONFIG.DEFAULT_EMAIL_FROM) return logger.error('SMTP-USER required. --not Found')
+            if (!mailer.SMTP_USER) return logger.error('SMTP-USER required. --not Found')
 
             if (!mailer.SMTP_PASSWORD) return logger.error('SMTP-PASSWORD required. --not Found')
 
@@ -58,11 +58,13 @@ class Mailer {
 
     async sendMail (mailOptions) {
 
-        mailOptions = {...mailOptions, from: mailOptions.from || mailer.DEFAULT_EMAIL_FROM}
+        mailOptions = {...mailOptions, from: mailOptions.from || `${CONFIG.APP_NAME} <${mailer.SMTP_USER}>`}
 
         await this.transporter.sendMail(mailOptions).then((info) => {
 
-            return {success: true, message:`Message sent: ${info.messageId}`}
+            logger.info(`Message sent: ${info.messageId}`)
+
+            return {success: true, message: `Message sent: ${info.messageId}`}
 
         });
 

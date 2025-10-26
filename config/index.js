@@ -8,6 +8,15 @@ const DEPLOYMENT_ENV = process.env.NODE_ENV || "development";
 const GLOBAL_CONSTANTS = {
     APP_NAME: "Node Js Boiler Template",
 
+    DEFAULT_ACCOUNT: {
+        FIRSTNAME: process.env.DEFAULT_ACCOUNT_FIRSTNAME,
+        LASTNAME: process.env.DEFAULT_ACCOUNT_LASTNAME,
+        EMAIL: process.env.DEFAULT_ACCOUNT_EMAIL,
+        PHONE: process.env.DEFAULT_ACCOUNT_PHONE,
+        STATUS: process.env.DEFAULT_ACCOUNT_STATUS,
+        PASSWORD: process.env.DEFAULT_ACCOUNT_PASSWORD
+    },
+
     DOMAIN: "node.com",
     
     SUPPORT_EMAIL: "support@example.com",
@@ -35,18 +44,19 @@ const CONFIG_BUILDER = {
             API_BASE_URL: "https://localhost:4000",
             AUTH_BASE_URL: "https://localhost:3000",
             LANDING_BASE_URL: "https://localhost:3000",
-            CORS_OPTION: ['*'],
+            CORS_OPTION: ['http://localhost:3000', '*'],
         },
         
         AUTH: {
             BCRYPT_SALT: Number(process.env.BCRYPT_SALT) || 10,
             JWT_SECRET: process.env.JWT_SECRET || "jwt-little-secret",
+            ENCRYPTION_SECRET: process.env.ENCRYPTION_SECRET || "encryption-little-secret",
             TOKEN_EXPIRES_IN: process.env.TOKEN_EXPIRES_IN ? ms(process.env.TOKEN_EXPIRES_IN) : ms("1h"),
             REFRESH_TOKEN_EXPIRES_IN: process.env.REFRESH_TOKEN_EXPIRES_IN ? ms(process.env.REFRESH_TOKEN_EXPIRES_IN) : ms("30d"),
             TOKEN_TYPES: {
-                refresh: 'refresh_token',
-                email_verification: 'email_verification',
-                password_reset: 'password_reset',
+                refresh: 'refreshToken',
+                emailVerification: 'emailVerification',
+                passwordReset: 'passwordReset',
                 onboarding: 'onboarding',
             }
         },
@@ -88,12 +98,13 @@ const CONFIG_BUILDER = {
         AUTH: {
             BCRYPT_SALT: Number(process.env.BCRYPT_SALT) || 10,
             JWT_SECRET: process.env.JWT_SECRET || "jwt-little-secret",
+            ENCRYPTION_SECRET: process.env.ENCRYPTION_SECRET || "encryption-little-secret",
             TOKEN_EXPIRES_IN: process.env.TOKEN_EXPIRES_IN ? ms(process.env.TOKEN_EXPIRES_IN) : ms("1h"),
             REFRESH_TOKEN_EXPIRES_IN: process.env.REFRESH_TOKEN_EXPIRES_IN ? ms(process.env.REFRESH_TOKEN_EXPIRES_IN) : ms("30d"),
             TOKEN_TYPES: {
-                refresh: 'refresh_token',
-                email_verification: 'email_verification',
-                password_reset: 'password_reset',
+                refresh: 'refreshToken',
+                emailVerification: 'emailVerification',
+                passwordReset: 'passwordReset',
                 onboarding: 'onboarding',
             }
         },

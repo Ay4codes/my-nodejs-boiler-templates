@@ -4,16 +4,28 @@ import Auth from '../middleware/auth.middleware.js'
 
 const router = express.Router();
 
-router.post('/', Auth.authGuard, Auth.checkPrivilege('create_user'), userCtrl.createUser)
+router.post('/', Auth.authGuard, Auth.checkPrivilege('CREATE_ROLE'), userCtrl.createUser)
 
-router.put('/onboard', Auth.authGuard, Auth.checkPrivilege('onboard_user'), userCtrl.onboardUser)
+router.post('/onboard', userCtrl.onboardUser)
 
-router.get('/all', Auth.authGuard, Auth.checkPrivilege('view_user'), userCtrl.getAllUser)
+router.post('/resend-onboarding-link', Auth.authGuard, Auth.checkPrivilege('RESEND_ONBOARDING_LINK'), userCtrl.resendOnboardingLink)
 
-router.get('/current', Auth.authGuard, Auth.checkPrivilege('view_user'), userCtrl.getCurrentUser)
+router.get('/all', Auth.authGuard, Auth.checkPrivilege('VIEW_USER'), userCtrl.getAllUser)
 
-router.put('/update', Auth.authGuard, Auth.checkPrivilege('update_user'), userCtrl.updateUser)
+router.get('/list', Auth.authGuard, userCtrl.getAllUserList)
 
-router.put('/change-password', Auth.authGuard, Auth.checkPrivilege('change_password'), userCtrl.changePassword)
+router.get('/', Auth.authGuard, Auth.checkPrivilege('VIEW_USER'), userCtrl.getUser)
+
+router.get('/current', Auth.authGuard, Auth.checkPrivilege('VIEW_USER'), userCtrl.getCurrentUser)
+
+router.put('/', Auth.authGuard, Auth.checkPrivilege('UPDATE_USERS'), userCtrl.updateUsers)
+
+router.put('/current', Auth.authGuard, Auth.checkPrivilege('UPDATE_USER'), userCtrl.updateUser)
+
+router.put('/deactivate', Auth.authGuard, Auth.checkPrivilege('DEACTIVATE_USER'), userCtrl.deactivateUser)
+
+router.put('/reactivate', Auth.authGuard, Auth.checkPrivilege('REACTIVATE_USER'), userCtrl.reactivateUser)
+
+router.put('/change-password', Auth.authGuard, Auth.checkPrivilege('CHANGE_PASSWORD'), userCtrl.changePassword)
 
 export default router;

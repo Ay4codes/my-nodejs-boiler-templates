@@ -8,6 +8,10 @@ import User from '../models/user.model.js'
 
 const AUTH = CONFIG.AUTH
 
+const ENCRYPTION_KEY = Buffer.from(AUTH.ENCRYPTION_SECRET, 'hex')
+
+if (ENCRYPTION_KEY.length !== 32) throw new Error('AUTH.ENCRYPTION_SECRET must be a 32-byte hex string (64 hex chars)')
+
 class TokenServices {
     
     async generateAuthToken(user) {
@@ -22,7 +26,7 @@ class TokenServices {
 
         const refreshTokenJwt = jwt.sign({ user_id: user._id }, AUTH.JWT_SECRET, { expiresIn: AUTH.REFRESH_TOKEN_EXPIRES_IN / 1000 })
 
-        return {success: true, status: 200, data: {token: accessTokenJwt, refresh_token: refreshTokenJwt, raw_refresh_token: refreshToken}}
+        return {success: true, status: 200, data: {token: accessTokenJwt, refreshToken: refreshTokenJwt, raw_refresh_token: refreshToken}}
     
     }
 
@@ -36,9 +40,9 @@ class TokenServices {
 
     }
 
-    async refreshAuthToken(refresh_token_jwt, refreshToken) {
+    async refreshAuthToken(refreshTokenJwt, refreshToken) {
         
-        const refreshTokenValue = await this.decodeToken(refresh_token_jwt)
+        const refreshTokenValue = await this.decodeToken(refreshTokenJwt)
         
         if (!refreshTokenValue.status) return {success: false, status: 401, message: 'Refresh token is expired', issue: refreshTokenValue.issue}
         
@@ -60,9 +64,9 @@ class TokenServices {
     
     }
 
-    async revokeRefreshToken(refresh_token_jwt, refreshToken) {
+    async revokeRefreshToken(refreshTokenJwt, refreshToken) {
         
-        const refreshTokenValue = await this.decodeToken(refresh_token_jwt)
+        const refreshTokenValue = await this.decodeToken(refreshTokenJwt)
         
         if (!refreshTokenValue.status) return {success: false, status: 401, message: 'Refresh token is expired', issue: refreshTokenValue.issue}
         
@@ -80,49 +84,95 @@ class TokenServices {
     
     }
 
-    async genereteToken(user, token_type) {
+    async genereteToken(user, tokenType) {
 
-        await Token.deleteMany({user: user._id, type: token_type})
-
-        const code = await this.generateOtp(5)
+        await Token.deleteMany({user: user._id, type: tokenType})
 
         const token = crypto.randomBytes(32).toString("hex")
 
-        const hashedCode = bcrypt.hashSync(code.data.code, AUTH.BCRYPT_SALT)
-
         const hashedToken = bcrypt.hashSync(token, AUTH.BCRYPT_SALT)
 
-        await new Token({code: hashedCode, token: hashedToken, user: user._id, type: token_type, expiredAt: CustomDate.now() + AUTH.TOKEN_EXPIRES_IN}).save()
+        await new Token({token: hashedToken, user: user._id, type: tokenType, expiredAt: CustomDate.now() + AUTH.TOKEN_EXPIRES_IN}).save()
 
-        return {success: true, status: 200, data: {code: code.data.code, token: token}}
+        const finalToken = {token: token, user: user?._id}
+
+        const excryptedToken = await this.encrypt(finalToken)
+
+        return {success: true, status: 200, data: {token: excryptedToken.data}}
 
     }
 
-    async verifyToken(user, token_type, code, token) {
+    async verifyToken(tokenType, token) {
+
+        const decryptedToken = await this.decrypt(token)
+
+        if (!decryptedToken.status) return {success: false, status: 400, message: 'Token is invalid', issue: '-token_invalid'}
+
+        const info = decryptedToken.data
+
+        const findToken = await Token.findOne({user: info?.user, type: tokenType, expiredAt: {$gt: CustomDate.now()}})
         
-        const findToken = await Token.findOne({user: user._id, type: token_type, expiredAt: {$gt: CustomDate.now()}})
+        if (!findToken) return {success: false, status: 401, message: "Token is expired", issue: '-token_expired'}
+
+        const verifyToken = await bcrypt.compareSync(info.token, findToken.token)
         
-        if (!findToken) return {success: false, status: 401, message: "Code or token is expired", issue: '-token_expired'}
-        
-        const verifyCode = await bcrypt.compare(code, findToken.code)
-        
-        const verifyToken = token ? await bcrypt.compare(token, findToken.token) : false
-        
-        if (!token) {
-        
-            if (!verifyCode) return {success: false, status: 401, message: 'Invalid code', issue: '-code_invalid'}
-        
-            await Token.deleteOne({_id: findToken._id})
-        
-            return {success: true, status: 200, message: 'Code verified successfully'}
-        
-        }
-        
-        if (!verifyToken || !verifyCode) return {success: false, status: 401, message: 'Invalid URL', issue: '-url_expired'}
+        if (!verifyToken) return {success: false, status: 401, message: 'Invalid URL', issue: '-url_expired'}
         
         await Token.deleteOne({_id: findToken._id})
         
-        return {success: true, status: 200, message: 'URL verified successfully'}
+        return {success: true, status: 200, message: 'URL verified successfully', data: findToken}
+    
+    }
+
+    async encrypt(data) {
+        
+        const iv = crypto.randomBytes(12)
+        
+        const cipher = crypto.createCipheriv('aes-256-gcm', ENCRYPTION_KEY, iv)
+
+        let input = data
+        
+        if (typeof data !== 'string') input = JSON.stringify(data)
+
+        const encrypted = Buffer.concat([cipher.update(input, 'utf8'), cipher.final()])
+        
+        const authTag = cipher.getAuthTag()
+
+        const finalEncryption = `${iv.toString('hex')}:${encrypted.toString('hex')}:${authTag.toString('hex')}`
+
+        return {success: true, status: 200, data: finalEncryption}
+   
+    }
+
+    async decrypt(encryptedString) {
+        
+        const [ivHex, encryptedHex, authTagHex] = encryptedString.split(':')
+        
+        if (!ivHex || !encryptedHex || !authTagHex) return {success: false, status: 400, message: 'Invalid format'}
+        
+        const decipher = crypto.createDecipheriv('aes-256-gcm', ENCRYPTION_KEY, Buffer.from(ivHex, 'hex'))
+        
+        decipher.setAuthTag(Buffer.from(authTagHex, 'hex'))
+        
+        const decrypted = Buffer.concat([
+
+            decipher.update(Buffer.from(encryptedHex, 'hex')),
+
+            decipher.final()
+
+        ])
+
+        const text = decrypted.toString('utf8')
+
+        try { 
+            
+            return {success: true, status: 200, data: JSON.parse(text)}
+        
+        } catch { 
+            
+            return {success: true, status: 200, data: text}
+        
+        }
     
     }
 

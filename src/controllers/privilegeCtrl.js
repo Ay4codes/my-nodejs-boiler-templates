@@ -13,6 +13,11 @@ class PrivilegeCtrl {
         res.status(getAllPrivileges.status).json(response(getAllPrivileges.success, getAllPrivileges.message, getAllPrivileges.data, getAllPrivileges.issue))
     }
 
+    async getAllPrivilegesList(req, res) {
+        const getAllPrivilegesList = await privilegeServices.getAllPrivilegesList(req.user)
+        res.status(getAllPrivilegesList.status).json(response(getAllPrivilegesList.success, getAllPrivilegesList.message, getAllPrivilegesList.data, getAllPrivilegesList.issue))
+    }
+
     async getPrivilege(req, res) {
         const getPrivilege = await privilegeServices.getPrivilege(req.user, req.query.id)
         res.status(getPrivilege.status).json(response(getPrivilege.success, getPrivilege.message, getPrivilege.data, getPrivilege.issue))

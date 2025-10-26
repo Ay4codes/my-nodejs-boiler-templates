@@ -44,6 +44,28 @@ class CustomDate {
     
     };
 
+    getStartOfDay = (dateString) => {
+        
+        const date = new Date(dateString);
+        
+        date.setUTCHours(0, 0, 0, 0);
+        
+        return date;
+    
+    }
+
+    getStartOfNextDay = (dateString) => {
+        
+        const date = new Date(dateString);
+        
+        date.setUTCDate(date.getUTCDate() + 1);
+        
+        date.setUTCHours(0, 0, 0, 0);
+        
+        return date;
+    
+    }
+
 }
 
 export default new CustomDate

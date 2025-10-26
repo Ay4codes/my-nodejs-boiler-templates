@@ -1,14 +1,8 @@
 import { APP_STATUSES } from "../constants/AppStatuses.js"
-import Privilege from "../models/privilege.model.js"
-import Role from "../models/role.model.js"
 
 class EnumServices {
     
     async getEnums () {
-
-        const getPrivileges = await Privilege.find().sort({createdAt: -1}).select('+name +status')
-
-        const getRoles = await Role.find().sort({createdAt: -1}).select('+name +status')
 
         return {
             
@@ -20,11 +14,9 @@ class EnumServices {
             
             data: {
                 
-                app_status: APP_STATUSES,
+                AppStatus: APP_STATUSES,
 
-                roles: getRoles,
-
-                privileges: getPrivileges,
+                Sex: ['MALE', 'FEMALE', 'OTHERS']
 
             }
         

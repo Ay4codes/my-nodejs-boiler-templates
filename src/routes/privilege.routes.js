@@ -4,10 +4,12 @@ import PrivilegeCtrl from '../controllers/privilegeCtrl.js';
 
 const router = express.Router()
 
-router.get('/all', Auth.authGuard, Auth.checkPrivilege('view_privilege'), PrivilegeCtrl.getAllPrivileges)
+router.get('/all', Auth.authGuard, Auth.checkPrivilege('VIEW_PRIVILEGE'), PrivilegeCtrl.getAllPrivileges)
 
-router.put('/', Auth.authGuard, Auth.checkPrivilege('update_privilege'), PrivilegeCtrl.updatePrivilege)
+router.get('/list', Auth.authGuard, PrivilegeCtrl.getAllPrivilegesList)
 
-router.get('/', Auth.authGuard, Auth.checkPrivilege('view_privilege'), PrivilegeCtrl.getPrivilege)
+router.put('/', Auth.authGuard, Auth.checkPrivilege('UPDATE_PRIVILEGE'), PrivilegeCtrl.updatePrivilege)
+
+router.get('/', Auth.authGuard, Auth.checkPrivilege('VIEW_PRIVILEGE'), PrivilegeCtrl.getPrivilege)
 
 export default router;

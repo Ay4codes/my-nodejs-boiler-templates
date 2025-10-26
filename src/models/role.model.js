@@ -6,11 +6,15 @@ const roleSchema = mongoose.Schema({
     
     name: {type: String, required: true},
 
+    usersAdded: {type: Number, required: true, default: 0},
+
     description: {type: String, required: true},
 
     privileges: [{type: mongoose.Schema.Types.ObjectId, ref: 'privilege', select: false}],
 
     status: {type: String, required: true, default: APP_STATUSES[0]},
+
+    modules: [{type: mongoose.Schema.Types.ObjectId, ref: 'module', select: false}],
 
     createdBy: {type: mongoose.Schema.Types.Mixed, required: true, ref: 'user', validate: [isObjectIdOrString, 'createdBy must be an ObjectId or string'], default: 'system'},
 

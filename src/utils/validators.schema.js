@@ -8,17 +8,21 @@ class ValidationSchema {
 
         this.register = Joi.object({
 
-            firstname: Joi.string().min(3).max(30).required().label('first name'),
+            firstName: Joi.string().min(3).max(30).required().label('first name'),
 
-            lastname: Joi.string().min(3).max(30).required().label('last name'),
+            lastName: Joi.string().min(3).max(30).required().label('last name'),
 
             country: Joi.string().hex().length(24).optional(),
 
             email: Joi.string().email().required().label('email'),
 
-            phone_number: Joi.string().min(6).max(15).label('phone number'),
+            sex: Joi.string().label('sex'),
 
-            password: Joi.string().min(8).required().label('password').regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/).message('Password must contain at least one lowercase letter, one uppercase letter, and one digit')
+            phoneNumber: Joi.string().min(6).max(15).label('phone number'),
+
+            password: Joi.string().min(8).required().label('password').regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/).message('Password must contain at least one lowercase letter, one uppercase letter, and one digit'),
+
+            redirectUrl: Joi.string().uri().required().label('redirect URL'),
 
         });
 
@@ -26,21 +30,19 @@ class ValidationSchema {
 
             email: Joi.string().email().required().label('email'),
 
-            password: Joi.string().min(8).required().label('password').regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/).message('Password must contain at least one lowercase letter, one uppercase letter, and one digit')
+            password: Joi.string().min(8).required().label('password').regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/).message('Password must contain at least one lowercase letter, one uppercase letter, and one digit'),
+
+            redirectUrl: Joi.string().uri().required().label('redirect URL')
 
         })
 
         this.logout = Joi.object({
 
-            refresh_token: Joi.string().required().label('refresh token')
+            refreshToken: Joi.string().required().label('refresh token')
 
         })
 
         this.verifyEmail = Joi.object({
-
-            user: Joi.string().required().hex().length(24),
-
-            code: Joi.string().required().min(6).max(6).label('Code'),
 
             token: Joi.string().label('Token'),
 
@@ -48,7 +50,7 @@ class ValidationSchema {
 
         this.requestPasswordReset = Joi.object({
 
-            redirect_url: Joi.string().uri().required().label('redirect URL'),
+            redirectUrl: Joi.string().uri().required().label('redirect URL'),
 
             email: Joi.string().email().required().label('email')
 
@@ -56,76 +58,84 @@ class ValidationSchema {
 
         this.resetPassword = Joi.object({
 
-            email: Joi.string().email().required().label('email'),
-
-            code: Joi.string().required().min(6).max(6).label('code'),
-
             token: Joi.string().required().label('token'),
 
-            new_password: Joi.string().required().min(8).label('new_password').regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/).message('Password must contain at least one lowercase letter, one uppercase letter, and one digit')
-
-        })
-
-        this.getUser = Joi.object({
-
-            user_id: Joi.string().required().label('User ID')
-
-            .custom((value, helpers) => {
-                
-                if (mongoose.Types.ObjectId.isValid(value)) return value;
-                  
-                return helpers.error('any.invalid');
-                
-            })
-
-            .message("User ID is invalid"),
+            newPassword: Joi.string().required().min(8).label('newPassword').regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/).message('Password must contain at least one lowercase letter, one uppercase letter, and one digit')
 
         })
 
 
         this.createUser = Joi.object({
 
-            firstname: Joi.string().min(3).max(30).required().label('first name'),
+            firstName: Joi.string().min(3).max(30).required().label('first name'),
 
-            lastname: Joi.string().min(3).max(30).required().label('last name'),
+            lastName: Joi.string().min(3).max(30).required().label('last name'),
 
             country: Joi.string().hex().length(24).optional(),
 
             email: Joi.string().email().required().label('email'),
 
-            phone_number: Joi.string().min(6).max(15).label('phone number'),
+            sex: Joi.string().label('sex'),
 
-            redirect_url: Joi.string().uri().required().label('redirect url')
+            phoneNumber: Joi.string().min(6).max(15).label('phone number'),
+
+            redirectUrl: Joi.string().uri().required().label('redirect url')
+
+        });
+
+
+        this.resendOnboardingUrl = Joi.object({
+
+            id: Joi.string().hex().length(24).optional(),
+
+            redirectUrl: Joi.string().uri().required().label('redirect url')
 
         });
 
 
         this.onboardUser = Joi.object({
 
-            firstname: Joi.string().min(3).max(30).required().label('first name'),
+            firstName: Joi.string().min(3).max(30).required().label('first name'),
 
-            lastname: Joi.string().min(3).max(30).required().label('last name'),
+            lastName: Joi.string().min(3).max(30).required().label('last name'),
 
             country: Joi.string().hex().length(24).required().label('country'),
             
-            phone_number: Joi.string().min(6).max(15).label('phone number'),
+            phoneNumber: Joi.string().min(6).max(15).label('phone number'),
+
+            sex: Joi.string().label('sex'),
 
             password: Joi.string().min(8).required().label('password').regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/).message('Password must contain at least one lowercase letter, one uppercase letter, and one digit'),
-
-            target: Joi.string().hex().length(24).required().label('target'),
-
-            code: Joi.string().required().label('code'),
 
             token: Joi.string().required().label('token')
 
         });
 
 
+        this.getUser = Joi.object({
+
+            id: Joi.string().hex().length(24).required(),
+
+        })
+
+        this.getById = Joi.object({
+
+            id: Joi.string().hex().length(24).required(),
+
+        })
+
+        this.deleteById = Joi.object({
+
+            id: Joi.string().hex().length(24).required(),
+
+        })
+
+
         this.getAllUser = Joi.object({
 
-            firstname: Joi.string().min(3).max(30).label('first name').optional(),
+            firstName: Joi.string().label('first name').optional(),
 
-            lastname: Joi.string().min(3).max(30).label('last name').optional(),
+            lastName: Joi.string().label('last name').optional(),
 
             email: Joi.string().optional(),
             
@@ -143,25 +153,64 @@ class ValidationSchema {
 
             maxDateCreated: Joi.string().isoDate().optional(),
 
+            start: Joi.number().required().min(0).default(0),
+
+            limit: Joi.number().required().min(1).max(30).required(),
+
         })
 
         
+        this.updateUsers = Joi.object({
+
+            id: Joi.string().hex().length(24).required(),
+
+            firstName: Joi.string().min(3).max(30).optional().label('first name'),
+
+            lastName: Joi.string().min(3).max(30).optional().label('last name'),
+
+            sex: Joi.string().optional().label('sex'),
+
+            country: Joi.string().hex().length(24).optional(),
+
+            phoneNumber: Joi.string().min(6).max(15).optional().label('phone number'),
+
+        })
+
+
         this.updateUser = Joi.object({
 
-            firstname: Joi.string().min(3).max(30).required().label('first name'),
+            firstName: Joi.string().min(3).max(30).optional().label('first name'),
 
-            lastname: Joi.string().min(3).max(30).required().label('last name'),
+            lastName: Joi.string().min(3).max(30).optional().label('last name'),
 
-            phone_number: Joi.string().min(3).max(30).required().label('phone number'),
+            sex: Joi.string().optional().label('sex'),
 
-        }).min(1)
+            country: Joi.string().hex().length(24).optional(),
+
+            phoneNumber: Joi.string().min(6).max(15).optional().label('phone number'),
+
+        })
+
+
+        this.deactivateUser = Joi.object({
+
+            id: Joi.string().hex().length(24).required(),
+
+        })
+        
+
+        this.reactivateUser = Joi.object({
+
+            id: Joi.string().hex().length(24).required(),
+
+        })
 
         
         this.changePassword = Joi.object({
 
-            old_password: Joi.string().required().min(8).label('old_password').regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/).message('Password must contain at least one lowercase letter, one uppercase letter, and one digit'),
+            oldPassword: Joi.string().required().min(8).label('oldPassword').regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/).message('Password must contain at least one lowercase letter, one uppercase letter, and one digit'),
 
-            new_password: Joi.string().required().min(8).label('new_password').regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/).message('Password must contain at least one lowercase letter, one uppercase letter, and one digit')
+            newPassword: Joi.string().required().min(8).label('newPassword').regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/).message('Password must contain at least one lowercase letter, one uppercase letter, and one digit')
 
         })
 
@@ -203,12 +252,41 @@ class ValidationSchema {
 
         })
 
+
+        this.updateModule = Joi.object({
+
+            id: Joi.string().hex().length(24).required(),
+
+            description: Joi.string().required(),
+
+        })
+
+        
+        this.getModule = Joi.object({
+
+            id: Joi.string().hex().length(24).required(),
+
+        })
+
+        
+        this.getAllModule = Joi.object({
+
+            name: Joi.string().lowercase().optional(),
+
+            status: Joi.string().optional().valid(...APP_STATUSES),
+
+            start: Joi.number().required().min(0).default(0),
+
+            limit: Joi.number().required().min(1).max(30).required(),
+
+        })
+
         
         this.createRole = Joi.object({
             
-            name: Joi.string().lowercase().required().min(3).max(50).messages({
+            name: Joi.string().uppercase().required().min(3).max(50).messages({
             
-                'string.pattern.base': 'Name must contain only lowercase letters and underscores',
+                'string.pattern.base': 'Name must contain only uppercase letters and underscores',
             
                 'string.min': 'Name must be at least 3 characters long',
             
@@ -218,7 +296,9 @@ class ValidationSchema {
             
             description: Joi.string().required().min(10).max(200),
             
-            privileges: Joi.array().items(Joi.string().hex().length(24)).optional()
+            privileges: Joi.array().items(Joi.string().hex().length(24)).min(1),
+
+            modules: Joi.array().items(Joi.string().hex().length(24)).min(1),
         
         }),
         
@@ -226,19 +306,39 @@ class ValidationSchema {
         this.updateRole = Joi.object({
         
             id: Joi.string().required().label('id').hex().length(24),
+
+            name: Joi.string().uppercase().required().min(3).max(50).messages({
+            
+                'string.pattern.base': 'Name must contain only uppercase letters and underscores',
+            
+                'string.min': 'Name must be at least 3 characters long',
+            
+                'string.max': 'Name must not exceed 50 characters'
+            
+            }),
         
-            description: Joi.string().min(10).max(200).optional(),
+            description: Joi.string().min(10).max(200).required(),
         
-            privileges: Joi.array().items(Joi.string().hex().length(24)).optional()
+            privileges: Joi.array().items(Joi.string().hex().length(24)).min(1),
+
+            modules: Joi.array().items(Joi.string().hex().length(24)).min(1),
+        
+        }),
+
+        this.assignRole = Joi.object({
+        
+            userIds: Joi.array().items(Joi.string().hex().length(24)).min(1).required(),
+        
+            roleId: Joi.string().hex().length(24).required()
         
         }),
         
         
-        this.assignRole = Joi.object({
+        this.removeRole = Joi.object({
         
-            user: Joi.string().hex().length(24).required(),
+            userId: Joi.string().hex().length(24).required(),
         
-            role: Joi.string().hex().length(24).required()
+            roleId: Joi.string().hex().length(24).required()
         
         }),
         
@@ -271,10 +371,49 @@ class ValidationSchema {
 
         this.getAllRoleHistory = Joi.object({
 
+            user: Joi.string().hex().length(24).required(),
+
+        })
+
+
+        this.getRoleMembers = Joi.object({
+            
+            roleId: Joi.string().hex().length(24).optional(),
+
+        })
+
+        this.uploadMedia = Joi.object({
+
+            name: Joi.string().required(),
+
+            downloadAccess: Joi.boolean().default(false),
+    
+            description: Joi.string().allow('').optional()
+
+        })
+
+        this.deleteMedia = Joi.object({
+
+            id: Joi.string().hex().length(24).required(),
+
+        })
+
+        this.getAllMedia = Joi.object({
+
+            name: Joi.string().lowercase().optional(),
+
+            status: Joi.string().optional().valid(...APP_STATUSES),
+
+            dateCreated: Joi.string().isoDate().optional(),
+
+            minDateCreated: Joi.string().isoDate().optional(),
+
+            maxDateCreated: Joi.string().isoDate().optional(),
+
             start: Joi.number().required().min(0).default(0),
-        
-            limit: Joi.number().required().min(1).max(30).default(10)
-        
+
+            limit: Joi.number().required().min(1).max(30).required(),
+
         })
     
     }

@@ -4,20 +4,24 @@ import RoleCtrl from '../controllers/roleCtrl.js';
 
 const router = express.Router()
 
-router.get('/all', Auth.authGuard, Auth.checkPrivilege('view_role'), RoleCtrl.getAllRoles)
+router.get('/all', Auth.authGuard, Auth.checkPrivilege('VIEW_ROLE'), RoleCtrl.getAllRoles)
 
-router.post('/', Auth.authGuard, Auth.checkPrivilege('create_role'), RoleCtrl.createRole)
+router.get('/list', Auth.authGuard, RoleCtrl.getAllRolesList)
 
-router.put('/', Auth.authGuard, Auth.checkPrivilege('update_role'), RoleCtrl.updateRole)
+router.get('/member', Auth.authGuard, Auth.checkPrivilege('VIEW_ROLE_MEMBER'), RoleCtrl.getMembers)
 
-router.get('/', Auth.authGuard, Auth.checkPrivilege('view_role'), RoleCtrl.getRole)
+router.post('/', Auth.authGuard, Auth.checkPrivilege('CREATE_ROLE'), RoleCtrl.createRole)
 
-router.post('/assign', Auth.authGuard, Auth.checkPrivilege('assign_role'), RoleCtrl.assignRoleToUser)
+router.put('/', Auth.authGuard, Auth.checkPrivilege('UPDATE_ROLE'), RoleCtrl.updateRole)
 
-router.post('/remove', Auth.authGuard, Auth.checkPrivilege('remove_role'), RoleCtrl.removeRoleFromUser)
+router.get('/', Auth.authGuard, Auth.checkPrivilege('VIEW_ROLE'), RoleCtrl.getRole)
 
-router.get('/history', Auth.authGuard, Auth.checkPrivilege('view_role_history'), RoleCtrl.getRoleHistory)
+router.post('/assign', Auth.authGuard, Auth.checkPrivilege('ASSIGN_ROLE'), RoleCtrl.assignRoleToUser)
 
-router.delete('/', Auth.authGuard, Auth.checkPrivilege('delete_role'), RoleCtrl.deleteRole)
+router.post('/remove', Auth.authGuard, Auth.checkPrivilege('REMOVE_ROLE'), RoleCtrl.removeRoleFromUser)
+
+router.get('/history', Auth.authGuard, Auth.checkPrivilege('VIEW_ROLE_HISTORY'), RoleCtrl.getRoleHistory)
+
+router.delete('/', Auth.authGuard, Auth.checkPrivilege('DELETE_ROLE'), RoleCtrl.deleteRole)
 
 export default router;

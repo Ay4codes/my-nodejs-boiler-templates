@@ -140,47 +140,47 @@ const countrySchema = new mongoose.Schema({
 
     cioc: { type: String, select: false },
 
-    independent: { type: Boolean },
+    independent: { type: Boolean, select: false },
 
     status: { type: String },
 
-    unMember: { type: Boolean },
+    unMember: { type: Boolean, select: false },
 
-    currencies: { type: Map, of: CurrencySchema },
+    currencies: { type: Map, of: CurrencySchema, select: false },
 
-    idd: { type: IddSchema },
+    idd: { type: IddSchema, select: false },
 
     capital: [{ type: String }],
 
-    altSpellings: [{ type: String }],
+    altSpellings: [{ type: String, select: false }],
 
-    region: { type: String },
+    region: { type: String, select: false },
 
-    subregion: { type: String },
+    subregion: { type: String, select: false },
 
-    languages: { type: Map, of: String },
+    languages: { type: Map, of: String, select: false },
 
     latlng: [{ type: Number, select: false }],
 
-    landlocked: { type: Boolean },
+    landlocked: { type: Boolean, select: false },
 
-    borders: [{ type: String }],
+    borders: [{ type: String, select: false }],
 
-    area: { type: Number },
+    area: { type: Number, select: false },
 
     demonyms: { type: DemonymsSchema, select: false },
 
-    cca3: { type: String, unique: true },
+    cca3: { type: String, unique: true, select: false },
 
     translations: { type: Map, of: TranslationSchema, select: false },
 
-    flag: { type: String },
+    flag: { type: String, select: false },
 
     maps: { type: MapsSchema, select: false },
 
-    population: { type: Number },
+    population: { type: Number, select: false },
 
-    fifa: { type: String },
+    fifa: { type: String, select: false },
 
     car: { type: CarSchema, select: false },
 
@@ -188,11 +188,11 @@ const countrySchema = new mongoose.Schema({
 
     continents: [{ type: String, select: false }],
 
-    flags: { type: FlagsSchema },
+    flags: { type: FlagsSchema, select: false },
 
-    coatOfArms: { type: CoatOfArmsSchema },
+    coatOfArms: { type: CoatOfArmsSchema, select: false },
 
-    startOfWeek: { type: String },
+    startOfWeek: { type: String, select: false },
 
     capitalInfo: { type: CapitalInfoSchema, select: false },
 

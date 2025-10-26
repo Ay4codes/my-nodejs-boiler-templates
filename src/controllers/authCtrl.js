@@ -14,12 +14,12 @@ class AuthCtrl {
     }
 
     async logoutUser(req, res) {
-        const logout = await authServices.logout({refresh_token: req.headers.refresh_token})
+        const logout = await authServices.logout({refreshToken: req.headers.refreshToken})
         res.status(logout.status).json(response(logout.success, logout.message, logout.data, logout.issue))
     }
 
     async refreshToken(req, res) {
-        const refreshToken = await authServices.refreshToken({refresh_token: req.headers.refresh_token})
+        const refreshToken = await authServices.refreshToken({refreshToken: req.headers.refreshToken})
         res.status(refreshToken.status).json(response(refreshToken.success, refreshToken.message, refreshToken.data, refreshToken.issue))
     }
 

@@ -13,18 +13,28 @@ class RoleCtrl {
         res.status(getRole.status).json(response(getRole.success, getRole.message, getRole.data, getRole.issue))
     }
 
+    async getMembers(req, res) {
+        const getMembers = await roleServices.getMembers(req.user, req.query.roleId)
+        res.status(getMembers.status).json(response(getMembers.success, getMembers.message, getMembers.data, getMembers.issue))
+    }
+
     async getAllRoles(req, res) {
         const getAllRoles = await roleServices.getAllRoles(req.user, {name: req.query.name, status: req.query.status, dateCreated: req.query.dateCreated, minDateCreated: req.query.minDateCreated, maxDateCreated: req.query.maxDateCreated, start: req.query.start, limit: req.query.limit})
         res.status(getAllRoles.status).json(response(getAllRoles.success, getAllRoles.message, getAllRoles.data, getAllRoles.issue))
     }
 
+    async getAllRolesList(req, res) {
+        const getAllRolesList = await roleServices.getAllRolesList(req.user)
+        res.status(getAllRolesList.status).json(response(getAllRolesList.success, getAllRolesList.message, getAllRolesList.data, getAllRolesList.issue))
+    }
+
     async getRoleHistory(req, res) {
-        const getRoleHistory = await roleServices.getRoleHistory(req.user, {start: req.query.start, limit: req.query.limit})
+        const getRoleHistory = await roleServices.getRoleHistory(req.user, {user: req.query.user})
         res.status(getRoleHistory.status).json(response(getRoleHistory.success, getRoleHistory.message, getRoleHistory.data, getRoleHistory.issue))
     }
 
     async updateRole(req, res) {
-        const updateRole = await roleServices.updateRole(req.user, req.query.id, req.body)
+        const updateRole = await roleServices.updateRole(req.user, req.body)
         res.status(updateRole.status).json(response(updateRole.success, updateRole.message, updateRole.data, updateRole.issue))
     }
 

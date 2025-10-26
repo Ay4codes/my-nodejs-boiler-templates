@@ -1,4 +1,4 @@
 
 export const APP_STATUSES = [
-    'active', 'pending', 'blocked', 'declined'
+    'ACTIVE', 'PENDING', 'BLOCKED', 'DECLINED', 'DELETED'
 ]

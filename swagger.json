@@ -450,7 +450,7 @@
 						"format": "email",
 						"description": "User's email address"
 					},
-					"phone_number": {
+					"phoneNumber": {
 						"type": "string",
 						"minLength": 6,
 						"maxLength": 15,
@@ -517,9 +517,9 @@
 			},
 			"LogoutRequest": {
 				"type": "object",
-				"required": ["refresh_token", "raw_refresh_token"],
+				"required": ["refreshToken", "raw_refresh_token"],
 				"properties": {
-					"refresh_token": {
+					"refreshToken": {
 						"type": "string",
 						"description": "Refresh token to revoke"
 					},
@@ -531,9 +531,9 @@
 			},
 			"RefreshTokenRequest": {
 				"type": "object",
-				"required": ["refresh_token", "raw_refresh_token"],
+				"required": ["refreshToken", "raw_refresh_token"],
 				"properties": {
-					"refresh_token": {
+					"refreshToken": {
 						"type": "string",
 						"description": "Refresh token to refresh"
 					},
@@ -566,14 +566,14 @@
 			},
 			"RequestPasswordResetRequest": {
 				"type": "object",
-				"required": ["email", "redirect_url"],
+				"required": ["email", "redirectUrl"],
 				"properties": {
 					"email": {
 						"type": "string",
 						"format": "email",
 						"description": "User's email address"
 					},
-					"redirect_url": {
+					"redirectUrl": {
 						"type": "string",
 						"format": "uri",
 						"description": "URL to redirect user for password reset"
@@ -582,7 +582,7 @@
 			},
 			"ResetPasswordRequest": {
 				"type": "object",
-				"required": ["email", "code", "token", "new_password"],
+				"required": ["email", "code", "token", "newPassword"],
 				"properties": {
 					"email": {
 						"type": "string",
@@ -599,7 +599,7 @@
 						"type": "string",
 						"description": "Reset token"
 					},
-					"new_password": {
+					"newPassword": {
 						"type": "string",
 						"minLength": 8,
 						"pattern": "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)",
@@ -611,7 +611,7 @@
 				"type": "object",
 				"properties": {
 					"token": { "type": "string", "description": "Access token" },
-					"refresh_token": { "type": "string", "description": "Refresh token" },
+					"refreshToken": { "type": "string", "description": "Refresh token" },
 					"raw_refresh_token": { "type": "string", "description": "Raw refresh token" }
 				}
 			},
@@ -619,11 +619,11 @@
 				"type": "object",
 				"properties": {
 					"_id": { "type": "string", "description": "User ID" },
-					"first_name": { "type": "string", "description": "First name" },
-					"last_name": { "type": "string", "description": "Last name" },
+					"firstName": { "type": "string", "description": "First name" },
+					"lastName": { "type": "string", "description": "Last name" },
 					"email": { "type": "string", "format": "email", "description": "Email address" },
 					"country": { "type": "string", "description": "Country" },
-					"phone_number": { "type": "string", "description": "Phone number" },
+					"phoneNumber": { "type": "string", "description": "Phone number" },
 					"roles": {
 						"type": "array",
 						"items": { "type": "string" },
