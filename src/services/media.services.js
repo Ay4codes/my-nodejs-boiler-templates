@@ -36,9 +36,11 @@ class MediaServices {
         
             filename: (req, file, cb) => {
         
-                const hexPrefix = crypto.randomBytes(16).toString('hex');
+                const uniquePrefix = crypto.randomBytes(16).toString('hex');
+
+                const finalName = uniquePrefix + path.extname(file.originalname); 
         
-                cb(null, "temp-" + hexPrefix + path.extname(file.originalname));
+                cb(null, finalName);
         
             },
         
@@ -52,30 +54,30 @@ class MediaServices {
         
         this.supportedFormats = {
         
-            gif: {extension: ".gif", sharpMethod: "gif", options: {quality: 100}},
+            '.gif': {extension: ".gif", sharpMethod: "gif", options: {quality: 100}},
             
-            jpeg: {extension: ".jpg", sharpMethod: "jpeg", options: {quality: 100, progressive: true}},
+            '.jpeg': {extension: ".jpg", sharpMethod: "jpeg", options: {quality: 90, progressive: true}},
             
-            jpg: {extension: ".jpg", sharpMethod: "jpeg", options: {quality: 100, progressive: true}},
+            '.jpg': {extension: ".jpg", sharpMethod: "jpeg", options: {quality: 90, progressive: true}},
             
-            png: {extension: ".png", sharpMethod: "png", options: {quality: 100, compressionLevel: 6}},
+            '.png': {extension: ".png", sharpMethod: "png", options: {quality: 90, compressionLevel: 6}},
             
-            webp: {extension: ".webp", sharpMethod: "webp", options: {quality: 100}},
+            '.webp': {extension: ".webp", sharpMethod: "webp", options: {quality: 90}},
             
-            avif: {extension: ".avif", sharpMethod: "avif", options: {quality: 100}},
+            '.avif': {extension: ".avif", sharpMethod: "avif", options: {quality: 90}},
         
         };
     
     }   
     
     
-    getOutputFormat(settings) {
+    getOutputFormat(originalFilename) {
 
-        const requestedFormat = settings.format?.toLowerCase();  
-    
-        if (!requestedFormat || !this.supportedFormats[requestedFormat]) return this.supportedFormats.gif;
+        const originalExtension = path.extname(originalFilename).toLowerCase();  
+        
+        if (!originalExtension || !this.supportedFormats[originalExtension]) return this.supportedFormats['.jpg'];
 
-        return this.supportedFormats[requestedFormat];
+        return this.supportedFormats[originalExtension];
 
     }   
 
@@ -108,7 +110,7 @@ class MediaServices {
             return false;
         }
     
-    }   
+    }
     
     
     async processAnimatedGif(inputPath, outputPath, resizeDimensions, outputFormat) {
@@ -181,36 +183,58 @@ class MediaServices {
         
         const optimizationSettings = { ...DEFAULT_OPTIMIZATION_SETTINGS};
         
-        const originalPath = path.join(UPLOADS_PATH, file.filename);
+        const originalFilename = file.filename;
         
-        const outputFormat = this.getOutputFormat(optimizationSettings);
+        const originalPath = path.join(UPLOADS_PATH, originalFilename);
+        
+        const outputFormat = this.getOutputFormat(file.originalname);
         
         const resizeDimensions = this.getResizeDimensions(optimizationSettings);   
         
-        const baseName = file.filename.split(".")[0];
+        const media = new Media({
+
+            name: data.name,
+
+            user: req?.user?._id,
+
+            description: data.description,
+
+            contentType: file.mimetype,
+
+            fileType: outputFormat.extension.substring(1).toUpperCase(),
+
+            downloadAccess: data.downloadAccess,
+
+            createdBy: req?.user?._id,
+
+            directory: '', 
+
+            fileSize: 0,
+
+        });
         
-        const initialOptimizedFilename = `${baseName}${outputFormat.extension}`;
-        
-        const initialOptimizedPath = path.join(UPLOADS_PATH, initialOptimizedFilename); 
+        const finalFilename = `${media._id.toHexString()}${outputFormat.extension}`;
+
+        const finalOptimizedPath = path.join(UPLOADS_PATH, finalFilename);
         
         try {
-        
+
+            let processed = false;
+
             const isAnimated = await this.isAnimatedGif(originalPath);  
-        
-            let processed = false;  
         
             if (isAnimated) {
         
-                processed = await this.processAnimatedGif(originalPath, initialOptimizedPath, resizeDimensions, outputFormat);    
+                processed = await this.processAnimatedGif(originalPath, finalOptimizedPath, resizeDimensions, outputFormat);    
         
-                if (!processed) processed = await this.optimizeAnimatedGifFallback(originalPath, initialOptimizedPath, outputFormat);
+                if (!processed) processed = await this.optimizeAnimatedGifFallback(originalPath, finalOptimizedPath, outputFormat);
         
                 if (!processed) {
-        
-                    fs.copyFileSync(originalPath, initialOptimizedPath);
-        
+
+                    fs.copyFileSync(originalPath, finalOptimizedPath);
+
                     processed = true;
-        
+
                 }
         
             } else {
@@ -219,41 +243,13 @@ class MediaServices {
         
                 sharpInstance = sharpInstance[outputFormat.sharpMethod](outputFormat.options);    
         
-                await sharpInstance.toFile(initialOptimizedPath);
+                await sharpInstance.toFile(finalOptimizedPath);
         
                 processed = true;
         
             }   
             
             if (processed) {
-                
-                const media = new Media({
-
-                    name: data.name,
-
-                    user: req?.user?._id,
-
-                    description: data.description,
-
-                    contentType: file.mimetype,
-
-                    fileType: outputFormat.extension.substring(1).toUpperCase(),
-
-                    downloadAccess: data.downloadAccess,
-
-                    createdBy: req?.user?._id,
-
-                    directory: '',
-
-                    fileSize: 0,
-
-                });
-                
-                const finalFilename = `${media._id.toHexString()}${outputFormat.extension}`;
-
-                const finalOptimizedPath = path.join(UPLOADS_PATH, finalFilename);
-
-                fs.renameSync(initialOptimizedPath, finalOptimizedPath);
                 
                 const fileStats = fs.statSync(finalOptimizedPath);
 
@@ -272,16 +268,20 @@ class MediaServices {
                 return {success: true, status: 201, message: "Media processed and saved successfully", data: savedMedia};
             
             } else {
-
+                
+                if (fs.existsSync(originalPath)) fs.unlinkSync(originalPath);
+                
+                if (fs.existsSync(finalOptimizedPath)) fs.unlinkSync(finalOptimizedPath); 
+                
                 throw new Error("Failed to process file");
             
             }
 
         } catch (err) {
-
+            
             if (fs.existsSync(originalPath)) fs.unlinkSync(originalPath);
-
-            if (fs.existsSync(initialOptimizedPath)) fs.unlinkSync(initialOptimizedPath); 
+            
+            if (fs.existsSync(finalOptimizedPath)) fs.unlinkSync(finalOptimizedPath); 
             
             return { success: false, status: 500, message: "Media processing failed: " + err.message };
 
