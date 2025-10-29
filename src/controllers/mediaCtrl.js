@@ -23,6 +23,11 @@ class MediaCtrl {
         res.status(deleteMedia.status).json(response(deleteMedia.success, deleteMedia.message, deleteMedia.data, deleteMedia.issue))
     }
 
+    async updateMedia(req, res) {
+        const updateMedia = await mediaServices.updateMedia(req.user, req.body)
+        res.status(updateMedia.status).json(response(updateMedia.success, updateMedia.message, updateMedia.data, updateMedia.issue))
+    }
+
 }
 
 export default new MediaCtrl

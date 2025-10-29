@@ -56,8 +56,10 @@ export const PRIVILEGES = [
 
     { name: "VIEW_MEDIA", description: 'Allows viewing media details'},
 
+    { name: "UPDATE_MEDIA", description: 'Allows updating media details'},
+
 ];
 
 export const DEFAULT_PRIVILEGES = [
-    'VIEW_USER', 'UPDATE_USER', 'RESET_PASSWORD', 'VERIFY_EMAIL', 'CHANGE_PASSWORD', 'ONBOARD_USER', 'UPLOAD_MEDIA'
+    'VIEW_USER', 'UPDATE_USER', 'RESET_PASSWORD', 'VERIFY_EMAIL', 'CHANGE_PASSWORD', 'ONBOARD_USER', 'UPLOAD_MEDIA', 'VIEW_MEDIA', 'UPDATE_MEDIA'
 ];

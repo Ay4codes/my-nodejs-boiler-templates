@@ -296,7 +296,11 @@ class MediaServices {
         
         if (error) return res.status(400).json(response(false, error.details[0].message))
         
-        if (!req.file) return res.status(400).json(response(false, "No File uploaded"));   
+        if (!req.file) return res.status(400).json(response(false, "No File uploaded")); 
+
+        const mediaExist = await Media.findOne({name: data?.name?.toUpperCase()})
+
+        if (mediaExist) return res.status(400).json(response(false, "File already exist"));
         
         const result = await this.acceptMedia(req, req.file, data);
 
@@ -314,6 +318,10 @@ class MediaServices {
         if (error) return res.status(400).json(response(false, error.details[0].message))
         
         if (!req.files || req.files.length === 0) return res.status(400).json(response(false, "No files uploaded"));
+
+        const mediaExist = await Media.findOne({name: data?.name?.toUpperCase()})
+
+        if (mediaExist) return res.status(400).json(response(false, "File already exist"));
 
         const uploadedMediaRecords = [];
     
@@ -380,7 +388,7 @@ class MediaServices {
         
         }
     
-        const getMedia = await Media.find(query).sort({createdAt: -1}).skip(data.start).limit(data.limit)
+        const getMedia = await Media.find(query).populate({path: 'user', select: 'firstName lastName email'}).sort({createdAt: -1}).skip(data.start).limit(data.limit)
     
         return {success: true, status: 200, message: 'Media retrieved successfully', data: getMedia}
     
@@ -407,6 +415,21 @@ class MediaServices {
         if (!mediaExist) return {success: false, status: 404, message: 'Media not found'}
     
         return {success: true, status: 200, message: 'Media retrieved successfully', data: mediaExist}
+    
+    }
+
+
+    async updateMedia(user, body) {
+
+        const {error, value: data} = ValidationSchema.updateMedia.validate(body)
+
+        if (error) return {success: false, status: 400, message: error.message}
+
+        const mediaRecord = await Media.findOneAndUpdate({_id: data.id}, {$set: {name: data.name}}, {new: true});
+
+        if (!mediaRecord) return {success: false, status: 404, message: "Media not found"};
+
+        return {success: true, status: 200, message: "Media updated successfully."};
     
     }
 

@@ -15,4 +15,6 @@ router.get('/list', Auth.authGuard, Auth.checkPrivilege('VIEW_MEDIA'), MediaCtrl
 
 router.get('/', Auth.authGuard, Auth.checkPrivilege('VIEW_MEDIA'), MediaCtrl.getMedia)
 
+router.put('/', Auth.authGuard, Auth.checkPrivilege('UPDATE_MEDIA'), MediaCtrl.updateMedia)
+
 export default router;

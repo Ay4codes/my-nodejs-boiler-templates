@@ -24,13 +24,23 @@ class UserCtrl {
     }
 
     async getAllUser(req, res) {
-        const getAllUser = await userServices.getAllUser(req.user, {firstName: req.query.firstName, lastName: req.query.lastName, email: req.query.email, status: req.query.status, role: req.query.role, dateCreated: req.query.dateCreated, minDateCreated: req.query.minDateCreated, maxDateCreated: req.query.maxDateCreated, start: req.query.start, limit: req.query.limit})
+        const getAllUser = await userServices.getAllUser(req.user, {firstName: req.query.firstName, lastName: req.query.lastName, email: req.query.email, status: req.query.status, dateCreated: req.query.dateCreated, minDateCreated: req.query.minDateCreated, maxDateCreated: req.query.maxDateCreated, start: req.query.start, limit: req.query.limit})
         res.status(getAllUser.status).json(response(getAllUser.success, getAllUser.message, getAllUser.data, getAllUser.issue))
     }
 
     async getAllUserList(req, res) {
         const getAllUserList = await userServices.getAllUserList(req.user)
         res.status(getAllUserList.status).json(response(getAllUserList.success, getAllUserList.message, getAllUserList.data, getAllUserList.issue))
+    }
+
+    async getAllStaffs(req, res) {
+        const getAllStaffs = await userServices.getAllStaffs(req.user, {firstName: req.query.firstName, lastName: req.query.lastName, email: req.query.email, status: req.query.status, role: req.query.role, dateCreated: req.query.dateCreated, minDateCreated: req.query.minDateCreated, maxDateCreated: req.query.maxDateCreated, start: req.query.start, limit: req.query.limit})
+        res.status(getAllStaffs.status).json(response(getAllStaffs.success, getAllStaffs.message, getAllStaffs.data, getAllStaffs.issue))
+    }
+
+    async getAllStaffList(req, res) {
+        const getAllStaffList = await userServices.getAllStaffList(req.user)
+        res.status(getAllStaffList.status).json(response(getAllStaffList.success, getAllStaffList.message, getAllStaffList.data, getAllStaffList.issue))
     }
 
     async getCurrentUser(req, res) {

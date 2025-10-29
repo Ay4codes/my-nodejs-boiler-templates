@@ -38,6 +38,8 @@ class RoleServices {
                         
             {name: 'USER', description: 'Standard user access', usersAdded: 1, createdBy: 'system', updatedBy: 'system', privileges: userPrivileges.map(p => p._id), modules: userModules.map(p => p._id)},
 
+            {name: 'STAFF', description: 'Standard staff access', usersAdded: 1, createdBy: 'system', updatedBy: 'system', privileges: userPrivileges.map(p => p._id), modules: userModules.map(p => p._id)},
+
             {name: 'SUPER_ADMIN', description: 'Full system access', usersAdded: 1, createdBy: 'system', updatedBy: 'system', privileges: allPrivileges.map(p => p._id), modules: allModules.map(p => p._id)},
         
         ]
@@ -290,7 +292,7 @@ class RoleServices {
     
         if (!role) return {success: false, status: 404, message: 'Role not found'}
 
-        if (role.name === 'USER' || role.name === "SUPER_ADMIN") return {success: false, status: 409, message: 'Default roles cannot be deleted'}
+        if (role.name === 'USER' || role.name === "SUPER_ADMIN" || role.name === 'STAFF') return {success: false, status: 409, message: 'Default roles cannot be deleted'}
     
         const usersWithRole = await User.find({roles: data.id}).limit(1)
     

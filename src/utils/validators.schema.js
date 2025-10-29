@@ -131,7 +131,41 @@ class ValidationSchema {
         })
 
 
+        this.updateMedia = Joi.object({
+
+            id: Joi.string().hex().length(24).required(),
+
+        })
+
+
         this.getAllUser = Joi.object({
+
+            firstName: Joi.string().label('first name').optional(),
+
+            lastName: Joi.string().label('last name').optional(),
+
+            email: Joi.string().optional(),
+            
+            status: Joi.string().optional().valid(...APP_STATUSES),
+            
+            position: Joi.string().hex().length(24).optional(),
+            
+            department: Joi.string().hex().length(24).optional(),
+
+            dateCreated: Joi.string().isoDate().optional(),
+
+            minDateCreated: Joi.string().isoDate().optional(),
+
+            maxDateCreated: Joi.string().isoDate().optional(),
+
+            start: Joi.number().required().min(0).default(0),
+
+            limit: Joi.number().required().min(1).max(30).required(),
+
+        })
+
+
+        this.getAllStaff = Joi.object({
 
             firstName: Joi.string().label('first name').optional(),
 
@@ -384,7 +418,7 @@ class ValidationSchema {
 
         this.uploadMedia = Joi.object({
 
-            name: Joi.string().required(),
+            name: Joi.string().uppercase().required(),
 
             downloadAccess: Joi.boolean().default(false),
     
@@ -413,6 +447,15 @@ class ValidationSchema {
             start: Joi.number().required().min(0).default(0),
 
             limit: Joi.number().required().min(1).max(30).required(),
+
+        })
+
+
+        this.updateMedia = Joi.object({
+
+            id: Joi.string().hex().length(24).required(),
+
+            name: Joi.string().required()
 
         })
     

@@ -13,6 +13,8 @@ const userSchema = mongoose.Schema({
     phoneNumber: {type: String},
 
     sex: {type: String},
+
+    isCompanyUser: {type: Boolean, default: false},
     
     status: {type: String, required: true, default: 'PENDING'},
 

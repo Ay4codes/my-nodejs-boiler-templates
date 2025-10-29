@@ -14,6 +14,10 @@ router.get('/all', Auth.authGuard, Auth.checkPrivilege('VIEW_USER'), userCtrl.ge
 
 router.get('/list', Auth.authGuard, userCtrl.getAllUserList)
 
+router.get('/staff/all', Auth.authGuard, Auth.checkPrivilege('VIEW_USER'), userCtrl.getAllStaffs)
+
+router.get('/staff/list', Auth.authGuard, userCtrl.getAllStaffList)
+
 router.get('/', Auth.authGuard, Auth.checkPrivilege('VIEW_USER'), userCtrl.getUser)
 
 router.get('/current', Auth.authGuard, Auth.checkPrivilege('VIEW_USER'), userCtrl.getCurrentUser)

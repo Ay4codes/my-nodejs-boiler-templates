@@ -27,7 +27,7 @@ class UserServices {
                 lastName: CONFIG.DEFAULT_ACCOUNT.LASTNAME,
                 
                 email: CONFIG.DEFAULT_ACCOUNT.EMAIL,
-            
+
                 phoneNumber: CONFIG.DEFAULT_ACCOUNT.PHONE,
                 
                 status: CONFIG.DEFAULT_ACCOUNT.STATUS,
@@ -64,7 +64,15 @@ class UserServices {
 
         if (userExist) return {success: false, status: 409, message: `Phone number or email already exist`}
 
+        const defaultRole = await Role.findOneAndUpdate({name: 'STAFF'}, {$inc: {usersAdded: 1}})
+
+        if (!defaultRole) return {success: false, status: 500, message: 'Deault roles not found', issue: '-role_not_found'}
+
+        newUser.roles = [defaultRole?._id]
+
         const savedUser = await new User(newUser).save()
+
+        await new RoleHistory({user: savedUser._id, role: defaultRole._id, action: 'ASSIGN'}).save()
 
         const userOnboarding = await TokenServices.genereteToken(savedUser, CONFIG.AUTH.TOKEN_TYPES.onboarding)
 
@@ -116,11 +124,9 @@ class UserServices {
 
         const defaultRole = await Role.findOneAndUpdate({name: 'USER'}, {$inc: {usersAdded: 1}})
 
-        if (!defaultRole) return {success: false, status: 500, message: 'User role not found', issue: '-role_not_found'}
+        if (!defaultRole) return {success: false, status: 500, message: 'Deault roles not found', issue: '-role_not_found'}
         
-        updates.roles = [defaultRole._id]
-
-        const savedUser = await User.findOneAndUpdate({_id: user}, {$set: updates}, {new: true})
+        const savedUser = await User.findOneAndUpdate({_id: user}, {$set: updates, $addToSet: {roles: defaultRole._id}}, {new: true})
 
         await new RoleHistory({user: savedUser._id, role: defaultRole._id, action: 'ASSIGN'}).save()
 
@@ -157,7 +163,11 @@ class UserServices {
         
         if (error) return {success: false, status: 400, message: error.message}
 
-        const query = {}  
+        const userRole = await Role.findOne({name: 'USER'})
+
+        if (!userRole) return {success: false, status: 500, message: 'Role not found', issue: '-role_not_found'}
+
+        const query = {roles: {$size: 1, $all: [userRole._id]}}
         
         if (data.firstName) query.firstName = data.firstName
 
@@ -166,8 +176,6 @@ class UserServices {
         if (data.email) query.email = data.email
 
         if (data.status) query.status = data.status
-
-        if (data.role) query.roles = data.role
 
         if (data.dateCreated) query.createdAt = {
             
@@ -194,8 +202,73 @@ class UserServices {
 
 
     async getAllUserList(user) {
+
+        const userRole = await Role.findOne({name: 'USER'})
+
+        if (!userRole) return {success: false, status: 500, message: 'Role not found', issue: '-role_not_found'}
+
+        const query = {roles: {$size: 1, $all: [userRole._id]}}
     
-        const getUsers = await User.find({}).sort({createdAt: -1}).select('firstName lastName status')
+        const getUsers = await User.find(query).sort({createdAt: -1}).select('firstName lastName status')
+
+        return {success: true, status: 200, message: 'User fetched successfully', data: getUsers}
+
+    }
+
+
+    async getAllStaffs(user, body) {
+
+        const {error, value: data} = ValidationSchema.getAllStaff.validate(body)
+        
+        if (error) return {success: false, status: 400, message: error.message}
+
+        const staffRole = await Role.findOne({name: 'STAFF'})
+
+        if (!staffRole) return {success: false, status: 500, message: 'Role not found', issue: '-role_not_found'}
+
+        const query = {roles: {$in: [staffRole._id]}}
+        
+        if (data.firstName) query.firstName = data.firstName
+
+        if (data.lastName) query.lastName = data.lastName
+
+        if (data.email) query.email = data.email
+
+        if (data.status) query.status = data.status
+
+        if (data.role) query.roles = {$all: [staffRole._id, data.role]};
+
+        if (data.dateCreated) query.createdAt = {
+            
+            $gte: CustomDate.getStartOfDay(data.dateCreated),
+            
+            $lt: CustomDate.getStartOfNextDay(data.dateCreated)
+        }
+
+        if (data.minDateCreated || data.maxDateCreated) {
+
+            query.createdAt = query.createdAt || {}
+    
+            if (data.minDateCreated) query.createdAt.$gte = CustomDate.getStartOfDay(data.minDateCreated);
+    
+            if (data.maxDateCreated) query.createdAt.$lt = CustomDate.getStartOfNextDay(data.maxDateCreated);
+        
+        }
+
+        const getUsers = await User.find(query).sort({createdAt: -1}).skip(data?.start).limit(data?.limit)
+
+        return {success: true, status: 200, message: 'User fetched successfully', data: getUsers}
+
+    }
+
+    
+    async getAllStaffList(user) {
+
+        const staffRole = await Role.findOne({name: 'STAFF'})
+        
+        if (!staffRole) return {success: false, status: 500, message: 'Staff not found', issue: '-role_not_found'}
+    
+        const getUsers = await User.find({roles: {$in: [staffRole._id]}}).sort({createdAt: -1}).select('firstName lastName status')
 
         return {success: true, status: 200, message: 'User fetched successfully', data: getUsers}
 
