@@ -7,6 +7,7 @@ import mailerServices from './mailer.services.js'
 import RoleHistory from '../models/role.history.model.js';
 import Role from '../models/role.model.js';
 import CustomDate from '../utils/date.js'
+import MediaServices from './media.services.js';
 
 class UserServices {
 
@@ -157,6 +158,19 @@ class UserServices {
     }
 
 
+    async uploadProfileImage(req) {
+
+        const result = await MediaServices.acceptMedia(req, req.file, req.body)
+
+        if (!result.success) return {success: result.success, status: result.status, message: result.message}
+
+        await User.updateOne({_id: req.user?._id}, {$set: {media: result.data?._id}})
+        
+        return {success: true, status: 200, message: 'Profile image uploaded successfully'}
+
+    }
+
+
     async getAllUser(user, body) {
 
         const {error, value: data} = ValidationSchema.getAllUser.validate(body)
@@ -194,7 +208,7 @@ class UserServices {
         
         }
 
-        const getUsers = await User.find(query).sort({createdAt: -1}).skip(data?.start).limit(data?.limit)
+        const getUsers = await User.find(query).populate('media').sort({createdAt: -1}).skip(data?.start).limit(data?.limit)
 
         return {success: true, status: 200, message: 'User fetched successfully', data: getUsers}
 
@@ -255,7 +269,7 @@ class UserServices {
         
         }
 
-        const getUsers = await User.find(query).sort({createdAt: -1}).skip(data?.start).limit(data?.limit)
+        const getUsers = await User.find(query).populate('media').sort({createdAt: -1}).skip(data?.start).limit(data?.limit)
 
         return {success: true, status: 200, message: 'User fetched successfully', data: getUsers}
 

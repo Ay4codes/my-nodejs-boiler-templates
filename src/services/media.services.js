@@ -298,9 +298,13 @@ class MediaServices {
         
         if (!req.file) return res.status(400).json(response(false, "No File uploaded")); 
 
-        const mediaExist = await Media.findOne({name: data?.name?.toUpperCase()})
+        if (data.name) {
 
-        if (mediaExist) return res.status(400).json(response(false, "File already exist"));
+            const mediaExist = await Media.findOne({name: data?.name?.toUpperCase()})
+
+            if (mediaExist) return res.status(400).json(response(false, "File already exist"));
+        
+        }
         
         const result = await this.acceptMedia(req, req.file, data);
 
@@ -319,9 +323,13 @@ class MediaServices {
         
         if (!req.files || req.files.length === 0) return res.status(400).json(response(false, "No files uploaded"));
 
-        const mediaExist = await Media.findOne({name: data?.name?.toUpperCase()})
+        if (data.name) {
 
-        if (mediaExist) return res.status(400).json(response(false, "File already exist"));
+            const mediaExist = await Media.findOne({name: data?.name?.toUpperCase()})
+
+            if (mediaExist) return res.status(400).json(response(false, "File already exist"));
+        
+        }
 
         const uploadedMediaRecords = [];
     
@@ -365,7 +373,7 @@ class MediaServices {
         
         if (error) return {success: false, status: 400, message: error.message}
 
-        const query = {}
+        const query = {name: { $ne: null, $ne: ""}}
     
         if (data.name) query.name = data.name
 
@@ -396,8 +404,10 @@ class MediaServices {
 
     
     async getAllMediaList(user) {
+
+        const query = {name: { $ne: null, $ne: ""}}
     
-        const getMedia = await Media.find({}).sort({createdAt: -1}).lean()
+        const getMedia = await Media.find(query).sort({createdAt: -1}).lean()
     
         return {success: true, status: 200, message: 'Media retrieved successfully', data: getMedia}
     

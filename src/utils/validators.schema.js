@@ -418,7 +418,7 @@ class ValidationSchema {
 
         this.uploadMedia = Joi.object({
 
-            name: Joi.string().uppercase().required(),
+            name: Joi.string().uppercase().optional(),
 
             downloadAccess: Joi.boolean().default(false),
     

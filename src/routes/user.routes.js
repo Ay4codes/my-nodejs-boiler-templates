@@ -1,6 +1,7 @@
 import express from "express";
 import userCtrl from "../controllers/userCtrl.js";
 import Auth from '../middleware/auth.middleware.js'
+import MediaServices from "../services/media.services.js";
 
 const router = express.Router();
 
@@ -25,6 +26,8 @@ router.get('/current', Auth.authGuard, Auth.checkPrivilege('VIEW_USER'), userCtr
 router.put('/', Auth.authGuard, Auth.checkPrivilege('UPDATE_USERS'), userCtrl.updateUsers)
 
 router.put('/current', Auth.authGuard, Auth.checkPrivilege('UPDATE_USER'), userCtrl.updateUser)
+
+router.post('/profile-image', Auth.authGuard, Auth.checkPrivilege('UPDATE_USER'), MediaServices.upload.single("file"), userCtrl.uploadProfileImage)
 
 router.put('/deactivate', Auth.authGuard, Auth.checkPrivilege('DEACTIVATE_USER'), userCtrl.deactivateUser)
 

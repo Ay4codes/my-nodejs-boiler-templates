@@ -22,7 +22,7 @@ const swaggerDocument = JSON.parse(fs.readFileSync(path.join(__dirname, '../../s
 
 const corsOptions = {
     
-    origin: [CONFIG.HOST.CORS_OPTION],
+    origin: CONFIG.HOST.CORS_OPTION,
     
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
     
@@ -47,13 +47,13 @@ const configurePreRouteMiddleware = (app) => {
     app.use('/v1/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
     // Serve Upload Folder
-    app.use("/uploads", express.static(DEPLOYMENT_ENV === 'development' ? path.join(__dirname, "..", "..", "public", CONFIG.UPLOADS.PATH) : CONFIG.UPLOADS.PATH));
+    app.use("/v1/uploads", cors(corsOptions), express.static(DEPLOYMENT_ENV === 'development' ? path.join(__dirname, "..", "..", "public", CONFIG.UPLOADS.PATH) : CONFIG.UPLOADS.PATH));
 
     // Use middleware to parse JSON request bodies
     app.use(express.json());
 
     // Serve Public Folder
-    app.use("/", express.static(path.join(__dirname, "..", "..", "public")));
+    app.use("/", cors(corsOptions), express.static(path.join(__dirname, "..", "..", "public")));
 
     // Express body parser
     app.use(express.urlencoded({ extended: true }));

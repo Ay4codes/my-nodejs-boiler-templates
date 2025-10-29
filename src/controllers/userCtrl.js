@@ -53,6 +53,11 @@ class UserCtrl {
         res.status(updateUsers.status).json(response(updateUsers.success, updateUsers.message, updateUsers.data, updateUsers.issue))
     }
 
+    async uploadProfileImage(req, res) {
+        const uploadProfileImage = await userServices.uploadProfileImage(req)
+        res.status(uploadProfileImage.status).json(response(uploadProfileImage.success, uploadProfileImage.message, uploadProfileImage.data, uploadProfileImage.issue))
+    }
+
     async updateUser(req, res) {
         const updateUser = await userServices.updateUser(req.user, req.body)
         res.status(updateUser.status).json(response(updateUser.success, updateUser.message, updateUser.data, updateUser.issue))

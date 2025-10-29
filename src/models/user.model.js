@@ -14,8 +14,6 @@ const userSchema = mongoose.Schema({
 
     sex: {type: String},
 
-    isCompanyUser: {type: Boolean, default: false},
-    
     status: {type: String, required: true, default: 'PENDING'},
 
     country: {type: mongoose.Schema.Types.ObjectId, ref: 'country'},
@@ -27,6 +25,8 @@ const userSchema = mongoose.Schema({
     department: {type: mongoose.Schema.Types.ObjectId, ref: 'department', default: null},
 
     lastSeen: {type: Date, required: true, default: CustomDate.now, select: false},
+
+    media: {type: mongoose.Schema.Types.ObjectId, ref: 'media'},
     
     password: {type: String, select: false},
     

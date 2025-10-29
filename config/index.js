@@ -44,7 +44,7 @@ const CONFIG_BUILDER = {
             API_BASE_URL: "https://localhost:4000",
             AUTH_BASE_URL: "https://localhost:3000",
             LANDING_BASE_URL: "https://localhost:3000",
-            CORS_OPTION: ['http://localhost:3000', '*'],
+            CORS_OPTION: ['http://localhost:3000', 'https://localhost:3000'],
         },
         
         AUTH: {

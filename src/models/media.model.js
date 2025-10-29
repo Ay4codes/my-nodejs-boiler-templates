@@ -3,7 +3,7 @@ import { isObjectIdOrString } from '../utils/isObjectIdOrString.js'
 
 const mediaSchema = mongoose.Schema({
     
-    name: {type: String, required: true},
+    name: {type: String, default: null},
 
     user: {type: mongoose.Schema.Types.ObjectId, ref: 'user', required: true},
 
