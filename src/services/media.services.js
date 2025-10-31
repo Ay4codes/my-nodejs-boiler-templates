@@ -477,33 +477,35 @@ class MediaServices {
         if (error) return res.status(400).json(response(false, error.message));
 
         try {
+            
             const mediaRecord = await Media.findOne({ _id: data.id });
 
-            if (!mediaRecord) {
-                return res.status(404).json(response(false, 'File not found'));
-            }
+            if (!mediaRecord) return res.status(404).json(response(false, 'File not found'));
 
-            if (!mediaRecord.downloadAccess) {
-                return res.status(403).json(response(false, 'Download access denied for this file'));
-            }
+            if (!mediaRecord.downloadAccess) return res.status(403).json(response(false, 'Download access denied for this file'));
 
             const finalFilename = mediaRecord.directory;
+
             const finalFilePath = path.join(UPLOADS_PATH, finalFilename);
+
             const originalName = mediaRecord.name;
 
-            if (!fs.existsSync(finalFilePath)) {
-                 return res.status(404).json(response(false, 'File not found on server disk'));
-            }
+            if (!fs.existsSync(finalFilePath)) return res.status(404).json(response(false, 'File not found on server disk'));
             
             return res.download(finalFilePath, originalName, (err) => {
+                
                 if (err) {
-                    console.error(`Error during file download of ${finalFilename}:`, err);
+                
+                    throw new Error(`Error during file download of ${finalFilename}:`, err);
+                
                 }
+            
             });
 
         } catch (err) {
-            console.error("Error fetching media for download:", err);
+            
             return res.status(500).json(response(false, 'An internal server error occurred during download.'));
+        
         }
 
     }
