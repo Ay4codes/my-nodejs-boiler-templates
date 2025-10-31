@@ -12,7 +12,7 @@ const roleSchema = mongoose.Schema({
 
     privileges: [{type: mongoose.Schema.Types.ObjectId, ref: 'privilege', select: false}],
 
-    status: {type: String, required: true, default: APP_STATUSES[0]},
+    status: {type: String, required: true, default: "ACTIVE"},
 
     modules: [{type: mongoose.Schema.Types.ObjectId, ref: 'module', select: false}],
 

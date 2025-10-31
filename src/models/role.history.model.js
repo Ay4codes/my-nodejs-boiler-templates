@@ -3,7 +3,7 @@ import { isObjectIdOrString } from '../utils/isObjectIdOrString.js'
 
 const roleHistorySchema = new mongoose.Schema({
 
-    status: {type: String, required: true, default: 'PENDING'},
+    status: {type: String, required: true, default: 'ACTIVE'},
 
     action: {type: String, enum: ['ASSIGN', 'REMOVE'], required: true},
     

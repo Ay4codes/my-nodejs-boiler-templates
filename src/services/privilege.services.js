@@ -11,7 +11,7 @@ class PrivilegeServices {
      
         const existingNames = existingPrivileges.map(p => p.name)
      
-        const newPrivileges = PRIVILEGES.filter(p => !existingNames.includes(p.name)).map(({name, description}) => ({name, description, createdBy: 'system', updatedBy: 'system'}))
+        const newPrivileges = PRIVILEGES.filter(p => !existingNames.includes(p.name)).map(({name, description}) => ({name, description, status: 'ACTIVE', createdBy: 'system', updatedBy: 'system'}))
         
         if (newPrivileges.length === 0) return {success: true, status: 200, message: 'No new privileges to seed'}
         

@@ -10,7 +10,7 @@ class ModuleServices {
      
         const existingNames = existingModules.map(p => p.name)
      
-        const newModules = APPLICATION_MODULES.filter(p => !existingNames.includes(p.name)).map(({name, description}) => ({name, description, createdBy: 'system', updatedBy: 'system'}))
+        const newModules = APPLICATION_MODULES.filter(p => !existingNames.includes(p.name)).map(({name, description}) => ({name, description, status: "ACTIVE", createdBy: 'system', updatedBy: 'system'}))
         
         if (newModules.length === 0) return {success: true, status: 200, message: 'No new privileges to seed'}
         

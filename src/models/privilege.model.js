@@ -7,7 +7,7 @@ const privilegesSchema = mongoose.Schema({
 
     description: {type: String, required: true},
 
-    status: {type: String, required: true, default: 'PENDING'},
+    status: {type: String, required: true, default: 'ACTIVE'},
 
     createdBy: {type: mongoose.Schema.Types.Mixed, required: true, ref: 'user', validate: [isObjectIdOrString, 'createdBy must be an ObjectId or string'], default: 'system'},
     
