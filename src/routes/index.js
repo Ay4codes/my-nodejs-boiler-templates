@@ -9,21 +9,21 @@ import roleRoutes from './role.routes.js'
 import modulesRoutes from './module.routes.js'
 import mediaRoutes from './media.routes.js'
 
-router.use("/v1/auth", authRoutes);
+router.use("/auth", authRoutes);
 
-router.use("/v1/users", userRoutes);
+router.use("/users", userRoutes);
 
-router.use("/v1/enums", enumRoutes);
+router.use("/enums", enumRoutes);
 
-router.use("/v1/countries", countryRoutes);
+router.use("/countries", countryRoutes);
 
-router.use("/v1/privilege", privilegeRoutes);
+router.use("/privilege", privilegeRoutes);
 
-router.use("/v1/role", roleRoutes);
+router.use("/role", roleRoutes);
 
-router.use("/v1/module", modulesRoutes);
+router.use("/module", modulesRoutes);
 
-router.use("/v1/media", mediaRoutes);
+router.use("/media", mediaRoutes);
 
 router.get("/", (req, res) => {
     

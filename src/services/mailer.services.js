@@ -93,6 +93,41 @@ class MailServices {
         
     }
 
+
+    async sendContactUserEmail (req, user, data) {
+
+        const file = req.file;
+
+        const attachments = [];
+
+        if (file) {
+
+            attachments.push({
+            
+                filename: file.originalname,
+            
+                content: file.buffer,
+            
+                contentType: file.mimetype
+            
+            });
+        
+        }
+
+        return mailer.sendMail({
+
+            to: user.email,
+
+            subject: `${data.subject}`,
+
+            html:  MailsTemplates.contactUserEmail(data.content),
+
+            attachments: attachments
+            
+        })
+        
+    }
+
 }
 
 export default new MailServices

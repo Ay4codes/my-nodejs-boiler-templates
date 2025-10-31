@@ -78,6 +78,11 @@ class UserCtrl {
         res.status(changePassword.status).json(response(changePassword.success, changePassword.message, changePassword.data, changePassword.issue))
     }
 
+    async contactUser(req, res) {
+        const contactUser = await userServices.contactUser(req, req.body)
+        res.status(contactUser.status).json(response(contactUser.success, contactUser.message, contactUser.data, contactUser.issue))
+    }
+
 }
 
 export default new UserCtrl

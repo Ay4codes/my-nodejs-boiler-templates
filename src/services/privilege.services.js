@@ -75,7 +75,7 @@ class PrivilegeServices {
 
     async getAllPrivilegesList(user) {
 
-        const getPrivileges = await Privilege.find({}).sort({createdAt: -1}).lean()
+        const getPrivileges = await Privilege.find({status: 'ACTIVE'}).sort({createdAt: -1}).lean()
     
         return {success: true, status: 200, message: 'Privileges retrieved successfully', data: getPrivileges}
     

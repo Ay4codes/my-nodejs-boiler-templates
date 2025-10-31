@@ -79,6 +79,18 @@ class MailTemplates {
         `);
     };
 
+
+    contactUserEmail = (content) => {
+        return (
+            Layout(`
+                <section>
+                    <p style="white-space: pre-wrap;">${content}</p>
+                    <p style="font-size: 10px;">If you have any questions or need assistance, feel free to contact our support team.</p>
+                </section>
+            `)
+        )
+    }
+
 }
 
 export default new MailTemplates

@@ -74,7 +74,7 @@ class ModuleServices {
 
     async getAllModulesList(user) {
 
-        const getModules = await Module.find({}).sort({createdAt: -1}).lean()
+        const getModules = await Module.find({status: 'ACTIVE'}).sort({createdAt: -1}).lean()
     
         return {success: true, status: 200, message: 'Modules retrieved successfully', data: getModules}
     

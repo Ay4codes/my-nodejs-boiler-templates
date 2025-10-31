@@ -58,8 +58,23 @@ export const PRIVILEGES = [
 
     { name: "UPDATE_MEDIA", description: 'Allows updating media details'},
 
+    { name: "DELETE_MEDIA", description: 'Allows deleting media'},
+
+    { name: "DOWNLOAD_MEDIA", description: 'Allows downloading media' },
+
+    { name: "CONTACT_USER", description: 'Allows contacting user' },
+
 ];
 
 export const DEFAULT_PRIVILEGES = [
-    'VIEW_USER', 'UPDATE_USER', 'RESET_PASSWORD', 'VERIFY_EMAIL', 'CHANGE_PASSWORD', 'ONBOARD_USER', 'UPLOAD_MEDIA', 'VIEW_MEDIA', 'UPDATE_MEDIA'
+    'VIEW_USER', 
+    'UPDATE_USER', 
+    'RESET_PASSWORD', 
+    'VERIFY_EMAIL', 
+    'CHANGE_PASSWORD', 
+    'ONBOARD_USER', 
+    'UPLOAD_MEDIA', 
+    'VIEW_MEDIA', 
+    'UPDATE_MEDIA',
+    'DOWNLOAD_MEDIA'
 ];

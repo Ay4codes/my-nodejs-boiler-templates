@@ -19,7 +19,7 @@ class MediaCtrl {
     }
 
     async deleteMedia(req, res) {
-        const deleteMedia = await mediaServices.deleteMedia(req.user, req.query.id)
+        const deleteMedia = await mediaServices.deleteMedia(req.user, req.body)
         res.status(deleteMedia.status).json(response(deleteMedia.success, deleteMedia.message, deleteMedia.data, deleteMedia.issue))
     }
 

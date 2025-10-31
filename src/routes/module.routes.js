@@ -4,12 +4,12 @@ import ModuleCtrl from '../controllers/moduleCtrl.js';
 
 const router = express.Router()
 
-router.get('/all', Auth.authGuard, Auth.checkPrivilege('VIEW_MODULE'), ModuleCtrl.getAllModules)
+router.get('/all', Auth.apiGuard, Auth.authGuard, Auth.checkPrivilege('VIEW_MODULE'), ModuleCtrl.getAllModules)
 
-router.get('/list', Auth.authGuard, ModuleCtrl.getAllModulesList)
+router.get('/list', Auth.apiGuard, Auth.authGuard, ModuleCtrl.getAllModulesList)
 
-router.put('/', Auth.authGuard, Auth.checkPrivilege('UPDATE_MODULE'), ModuleCtrl.updateModule)
+router.put('/', Auth.apiGuard, Auth.authGuard, Auth.checkPrivilege('UPDATE_MODULE'), ModuleCtrl.updateModule)
 
-router.get('/', Auth.authGuard, Auth.checkPrivilege('VIEW_MODULE'), ModuleCtrl.getModule)
+router.get('/', Auth.apiGuard, Auth.authGuard, Auth.checkPrivilege('VIEW_MODULE'), ModuleCtrl.getModule)
 
 export default router;

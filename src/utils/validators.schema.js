@@ -458,6 +458,17 @@ class ValidationSchema {
             name: Joi.string().required()
 
         })
+
+
+        this.contactUser = Joi.object({
+
+            receiver: Joi.string().hex().length(24).required(),
+
+            subject: Joi.string().required(),
+
+            content: Joi.string().required(),
+
+        })
     
     }
 

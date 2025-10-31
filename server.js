@@ -10,6 +10,7 @@ import roleServices from './src/services/role.services.js';
 import moduleService from './src/services/modules.service.js';
 import userServices from './src/services/user.services.js';
 import countryServices from './src/services/country.services.js';
+import configureErrorMiddleware from './src/middleware/error.middleware.js';
 
 const app = express()
 
@@ -17,25 +18,37 @@ const PORT = process.env.PORT || 4000;
 
 configurePreRouteMiddleware(app)
 
-app.use(routes)
+app.use('/v1', routes)
+
+app.use((req, res, next) => {
+    
+	const error = new Error(`Not Found - ${req.originalUrl}`);
+    
+	error.status = 404;
+    
+	next(error);
+
+});
+
+app.use(configureErrorMiddleware);
 
 app.listen(PORT, async () => {
-  
-  await connectMongoDB()
+	
+	await connectMongoDB()	
+	
+	await MailerInstance.verifyConnection()	
+	
+	await moduleService.seedModules()	
 
-  await MailerInstance.verifyConnection()
+	await privilegeServices.seedPrivileges()	
 
-  await moduleService.seedModules()
+	await roleServices.seedRoles()	
+	
+	await userServices.seedUsers()	
 
-  await privilegeServices.seedPrivileges()
-
-  await roleServices.seedRoles()
-
-  await userServices.seedUsers()
-
-  await countryServices.seedCountries()
-
-  logger.info(`:::> Server listening on port ${PORT} @ http://localhost:${PORT} in ${DEPLOYMENT_ENV} mode <:::`);
+	await countryServices.seedCountries()	
+	
+	logger.info(`:::> Server listening on port ${PORT} @ http://localhost:${PORT} in ${DEPLOYMENT_ENV} mode <:::`);
 
 })
 

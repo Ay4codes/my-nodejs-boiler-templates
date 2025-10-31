@@ -262,7 +262,7 @@ class RoleServices {
 
     async getAllRolesList(user) {
     
-        const roles = await Role.find({}).populate({path: 'privileges', select: '+privileges +modules'}).sort({createdAt: -1}).lean()
+        const roles = await Role.find({status: 'ACTIVE'}).populate({path: 'privileges', select: '+privileges +modules'}).sort({createdAt: -1}).lean()
         
         return {success: true, status: 200, message: 'Roles retrieved successfully', data: roles}
     

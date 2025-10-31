@@ -16,37 +16,54 @@ const Layout = (children) => {
                         font-family: 'Poppins', sans-serif;
                         font-weigth: 500;
                     }
+                    /* Removed text-align: center from general elements */
                     p {
                         font-size: 17px;
-                        text-align: center;
-                        line-height: 2.5rem;
+                        line-height: 1.6;
                         text-decoration: none;
+                        margin-top: 15px;
+                        margin-bottom: 15px;
                     }
                     a {
                         font-size: 17px;
-                        text-align: center;
                         text-decoration: none;
                     }
                     h3 {
                         font-size: 22px;
-                        text-align: center;
+                        margin-top: 0;
+                        margin-bottom: 25px;
                     }
                     hr {
                         background-color: ${colors.deepGrey};
                         border: none;
                         height: 1px;
+                        margin-top: 25px;
+                        margin-bottom: 25px;
+                    }
+                    /* Ensure button is centered or full-width */
+                    .button-container {
+                        text-align: center;
+                        margin-top: 30px;
+                        margin-bottom: 30px;
                     }
                 </style>
             </head>
             <body>
                 <div style="display: flex; justify-content: center; width: 100%; margin-top: 20px">
-                    <div style="padding: 40px 45px; max-width: 420px; min-width: 380px; border: 1px solid ${colors.deepGrey}; border-radius: 12px;">
+                    <div style="
+                        padding: 40px 45px; 
+                        max-width: 550px; /* Increased max width for more standard look */
+                        min-width: 450px; 
+                        border: 1px solid ${colors.deepGrey}; 
+                        border-radius: 12px;
+                        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); 
+                    ">
                         ${children}
                         <br />
                         <br />
                         <hr />
-                        <p style="line-height: 1rem; font-size: 14px;">© ${CONFIG.APP_NAME} ${CustomDate.year()}</p>
-                        <p style="line-height: 1rem; font-size: 14px;">Easy Peasy</p>
+                        <p style="text-align: center; line-height: 1rem; font-size: 14px;">© ${CONFIG.APP_NAME} ${CustomDate.year()}</p>
+                        <p style="text-align: center; line-height: 1rem; font-size: 14px;">Easy Peasy</p>
                     </div>
                 </div>
             </body>

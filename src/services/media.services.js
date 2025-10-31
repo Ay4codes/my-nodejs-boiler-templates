@@ -51,6 +51,15 @@ class MediaServices {
             storage: this.storage,
         
         });   
+
+        
+        this.uploadInMemory = multer({
+        
+            storage: this.memoryStorage,
+        
+            limits: { fileSize: 2 * 1024 * 1024 }
+        
+        });
         
         this.supportedFormats = {
         
@@ -175,7 +184,7 @@ class MediaServices {
     
     }   
 
-    async acceptMedia(req, file, body) {
+    async acceptMedia(req, file, body, useCase) {
         
         const { error, value: data } = ValidationSchema.uploadMedia.validate(body);
         
@@ -193,9 +202,11 @@ class MediaServices {
         
         const media = new Media({
 
-            name: data.name,
+            name: data?.name?.toUpperCase(),
 
             user: req?.user?._id,
+
+            useCase: useCase || 'MEDIA',
 
             description: data.description,
 
@@ -373,9 +384,9 @@ class MediaServices {
         
         if (error) return {success: false, status: 400, message: error.message}
 
-        const query = {name: { $ne: null, $ne: ""}}
+        const query = {useCase: 'MEDIA'}
     
-        if (data.name) query.name = data.name
+        if (data.name) query.name = data?.name?.toUpperCase()
 
         if (data.status) query.status = data.status
 
@@ -405,7 +416,7 @@ class MediaServices {
     
     async getAllMediaList(user) {
 
-        const query = {name: { $ne: null, $ne: ""}}
+        const query = {useCase: 'MEDIA', status: 'ACTIVE'}
     
         const getMedia = await Media.find(query).sort({createdAt: -1}).lean()
     
@@ -444,9 +455,9 @@ class MediaServices {
     }
 
     
-    async deleteMedia(user, id) {
+    async deleteMedia(user, body) {
 
-        const {error, value: data} = ValidationSchema.deleteById.validate({id: id})
+        const {error, value: data} = ValidationSchema.deleteById.validate(body)
 
         if (error) return {success: false, status: 400, message: error.message}
 
@@ -458,6 +469,44 @@ class MediaServices {
     
     }
 
+
+    async downloadMedia(req, res) {
+        
+        const { error, value: data } = ValidationSchema.getById.validate({id: req.query.id});
+        
+        if (error) return res.status(400).json(response(false, error.message));
+
+        try {
+            const mediaRecord = await Media.findOne({ _id: data.id });
+
+            if (!mediaRecord) {
+                return res.status(404).json(response(false, 'File not found'));
+            }
+
+            if (!mediaRecord.downloadAccess) {
+                return res.status(403).json(response(false, 'Download access denied for this file'));
+            }
+
+            const finalFilename = mediaRecord.directory;
+            const finalFilePath = path.join(UPLOADS_PATH, finalFilename);
+            const originalName = mediaRecord.name;
+
+            if (!fs.existsSync(finalFilePath)) {
+                 return res.status(404).json(response(false, 'File not found on server disk'));
+            }
+            
+            return res.download(finalFilePath, originalName, (err) => {
+                if (err) {
+                    console.error(`Error during file download of ${finalFilename}:`, err);
+                }
+            });
+
+        } catch (err) {
+            console.error("Error fetching media for download:", err);
+            return res.status(500).json(response(false, 'An internal server error occurred during download.'));
+        }
+
+    }
 }
 
 export default new MediaServices

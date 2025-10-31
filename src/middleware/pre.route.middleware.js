@@ -7,12 +7,10 @@ import { helmetConfig } from "../../config/helmet.js";
 import morgan from 'morgan'
 import trimIncomingRequest from "./trim-incoming.middleware.js";
 import { fileURLToPath } from 'url';
-import configureErrorMiddleware from "./error.middleware.js";
 import { CONFIG, DEPLOYMENT_ENV } from "../../config/index.js";
 import logger from "../logger/index.js";
 import swaggerUi  from 'swagger-ui-express'
 import fs from 'fs';
-import Auth from '../middleware/auth.middleware.js'
 
 const __filename = fileURLToPath(import.meta.url);
 
@@ -63,12 +61,6 @@ const configurePreRouteMiddleware = (app) => {
 
     // Use custom middleware to trim object strings
     app.use(trimIncomingRequest);
-
-    //App Guard
-    app.use(Auth.apiGuard)
-
-    // Error middleware
-    app.use(configureErrorMiddleware);
 
     // Logger
     app.logger = logger;

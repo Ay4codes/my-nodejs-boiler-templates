@@ -12,39 +12,43 @@ import MediaServices from './media.services.js';
 class UserServices {
 
     async seedUsers() {
-    
-        const usersCount = await User.countDocuments()
-    
+
+        const usersCount = await User.countDocuments();
+
         if (usersCount === 0) {
 
-            const allRoles = await Role.find({}).select('_id')
+            const requiredFields = [ 'FIRSTNAME', 'LASTNAME', 'EMAIL', 'PASSWORD', 'STATUS'];
 
-            const hashedPassword = bcrypt.hashSync(CONFIG.DEFAULT_ACCOUNT.PASSWORD, CONFIG.AUTH.BCRYPT_SALT)
+            const missingFields = requiredFields.filter(field => !CONFIG.DEFAULT_ACCOUNT[field]);
+
+            if (missingFields.length > 0) throw new Error(`FATAL: Cannot seed default user. Missing required configuration fields in CONFIG.DEFAULT_ACCOUNT: ${missingFields.join(', ')}`);
+
+            const allRoles = await Role.find({}).select('_id');
+
+            const hashedPassword = bcrypt.hashSync(CONFIG.DEFAULT_ACCOUNT.PASSWORD, CONFIG.AUTH.BCRYPT_SALT);
 
             const defaultAccount = await new User({
-                
+
                 firstName: CONFIG.DEFAULT_ACCOUNT.FIRSTNAME,
-                
+
                 lastName: CONFIG.DEFAULT_ACCOUNT.LASTNAME,
-                
+
                 email: CONFIG.DEFAULT_ACCOUNT.EMAIL,
 
                 phoneNumber: CONFIG.DEFAULT_ACCOUNT.PHONE,
-                
+
                 status: CONFIG.DEFAULT_ACCOUNT.STATUS,
             
                 roles: allRoles,
             
                 password: hashedPassword,
-                
-            }).save()
 
-            console.log(defaultAccount)
+            }).save();
 
+            console.log(defaultAccount);
         }
-        
-        return {success: true, status: 200, message: 'Users seeded successfully'}
-    
+
+        return {success: true, status: 200, message: 'Users seeded successfully'};
     }
 
     async createUser(user, body) {
@@ -90,7 +94,7 @@ class UserServices {
 
         if (error) return {success: false, status: 400, message: error.message}
 
-        const userExist = await User.findOne({_id: data?.id})
+        const userExist = await User.findOne({_id: data?.id, status: 'ACTIVE'})
 
         if (!userExist) return {success: false, status: 404, message: `User does not exist`}
 
@@ -123,11 +127,15 @@ class UserServices {
 
         data.sex && (updates.sex = data.sex);
 
-        const defaultRole = await Role.findOneAndUpdate({name: 'USER'}, {$inc: {usersAdded: 1}})
+        const defaultRole = await Role.findOne({name: 'USER'})
 
         if (!defaultRole) return {success: false, status: 500, message: 'Deault roles not found', issue: '-role_not_found'}
         
-        const savedUser = await User.findOneAndUpdate({_id: user}, {$set: updates, $addToSet: {roles: defaultRole._id}}, {new: true})
+        const savedUser = await User.findOneAndUpdate({_id: user, status: 'ACTIVE'}, {$set: updates, $addToSet: {roles: defaultRole._id}}, {new: true})
+
+        if (!savedUser) return {success: false, status: 404, message: `User does not exist`}
+
+        await Role.updateOne({name: 'USER'}, {$inc: {usersAdded: 1}})
 
         await new RoleHistory({user: savedUser._id, role: defaultRole._id, action: 'ASSIGN'}).save()
 
@@ -160,7 +168,7 @@ class UserServices {
 
     async uploadProfileImage(req) {
 
-        const result = await MediaServices.acceptMedia(req, req.file, req.body)
+        const result = await MediaServices.acceptMedia(req, req.file, req.body, 'DISPLAY_PICTURE')
 
         if (!result.success) return {success: result.success, status: result.status, message: result.message}
 
@@ -177,11 +185,7 @@ class UserServices {
         
         if (error) return {success: false, status: 400, message: error.message}
 
-        const userRole = await Role.findOne({name: 'USER'})
-
-        if (!userRole) return {success: false, status: 500, message: 'Role not found', issue: '-role_not_found'}
-
-        const query = {roles: {$size: 1, $all: [userRole._id]}}
+        const query = {}
         
         if (data.firstName) query.firstName = data.firstName
 
@@ -217,13 +221,7 @@ class UserServices {
 
     async getAllUserList(user) {
 
-        const userRole = await Role.findOne({name: 'USER'})
-
-        if (!userRole) return {success: false, status: 500, message: 'Role not found', issue: '-role_not_found'}
-
-        const query = {roles: {$size: 1, $all: [userRole._id]}}
-    
-        const getUsers = await User.find(query).sort({createdAt: -1}).select('firstName lastName status')
+        const getUsers = await User.find({status: 'ACTIVE'}).sort({createdAt: -1}).select('firstName lastName status')
 
         return {success: true, status: 200, message: 'User fetched successfully', data: getUsers}
 
@@ -282,7 +280,7 @@ class UserServices {
         
         if (!staffRole) return {success: false, status: 500, message: 'Staff not found', issue: '-role_not_found'}
     
-        const getUsers = await User.find({roles: {$in: [staffRole._id]}}).sort({createdAt: -1}).select('firstName lastName status')
+        const getUsers = await User.find({status: 'ACTIVE', roles: {$in: [staffRole._id]}}).sort({createdAt: -1}).select('firstName lastName status')
 
         return {success: true, status: 200, message: 'User fetched successfully', data: getUsers}
 
@@ -369,7 +367,7 @@ class UserServices {
     }
 
 
-    async changePassword (body, user) {
+    async changePassword (user, body) {
 
         const {error, value: data} = ValidationSchema.changePassword.validate(body)
 
@@ -386,6 +384,23 @@ class UserServices {
         await User.updateOne({_id: findUser._id}, {$set: {password: hashedPassword}})
 
         return {success: true, status: 200, message: 'Password changed successfully'}
+
+    }
+
+
+    async contactUser(req, body) {
+
+        const {error, value: data} = ValidationSchema.contactUser.validate(body)
+
+        if (error) return {success: false, status: 400, message: error.message}
+
+        const userExist = await User.findOne({_id: data.receiver, status: 'ACTIVE'})
+
+        if (!userExist) return {success: false, status: 404, message: "Receiver does not exist"}
+
+        await mailerServices.sendContactUserEmail(req, userExist, data)
+
+        return {success: true, status: 200, message: 'User contacted successfully'}
 
     }
     

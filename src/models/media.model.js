@@ -11,6 +11,8 @@ const mediaSchema = mongoose.Schema({
 
     status: {type: String, required: true, default: 'ACTIVE'},
 
+    useCase: {type: String, required: true, default: 'MEDIA', enum: ['MEDIA', 'DISPLAY_PICTURE']},
+
     directory: {type: String, required: true},
 
     contentType: {type: String, required: true},
