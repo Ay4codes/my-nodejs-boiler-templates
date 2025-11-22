@@ -160,8 +160,6 @@ class RoleServices {
 
         await RoleHistory.insertMany(historyEntries);
 
-        await RoleHistory.insertMany(historyEntries);
-
         await User.find({ _id: {$in: successfulAssignments }}).populate({ path: 'roles', populate: { path: 'privileges' } });
 
         let message = `Role assigned to ${successfulAssignments.length} user(s) successfully.`;
